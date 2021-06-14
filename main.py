@@ -81,7 +81,7 @@ async def bet(ctx):
                     intbetamt = int(betinplist[0])
                     await ctx.send(f"`Your Bet:{str(teamcon).capitalize()} | {str(ascore)} - {str(bscore)} | {str(intbetamt)} UU`")
                     
-                except ZeroDivisionError:
+                except TypeError:
                     await ctx.send("You gave wrong input \:(")
 
                     
