@@ -8,12 +8,23 @@ mycursor.execute("CREATE TABLE DTRANSACTIONS(TID BIGINT(20) PRIMARY KEY AUTO_INC
 
 mydb.commit()
 
-mycursor.execute("DESC DGUILDS")
-x = mycursor.fetchall()
-print(x)
-mycursor.execute("DESC DUSERS")
-x = mycursor.fetchall()
-print(x)
-mycursor.execute("DESC DTRANSACTIONS")
-x = mycursor.fetchall()
-print(x)
+#DGUILDS
+[('GUID', 'bigint(20)', 'NO', 'PRI', None, ''), 
+('CNAM', 'varchar(20)', 'YES', '', None, ''), 
+('CSYM', 'varchar(20)', 'YES', '', None, '')]
+
+#DUSERS
+[('DUID', 'bigint(20)', 'NO', 'PRI', None, ''), 
+('GUID', 'bigint(20)', 'YES', '', None, ''), 
+('DOC', 'datetime', 'YES', '', None, ''), 
+('CBAL', 'bigint(20)', 'YES', '', None, ''), 
+('CDC', 'datetime', 'YES', '', None, '')]
+
+#DTRANSACTIONS
+[('TID', 'bigint(20)', 'NO', 'PRI', None, 'auto_increment'), 
+('DONOR', 'bigint(20)', 'YES', '', None, ''), 
+('RECEIVER', 'bigint(20)', 'YES', '', None, ''), 
+('PRINCIPLE', 'bigint(20)', 'YES', '', None, ''), 
+('AMOUNT', 'bigint(20)', 'YES', '', None, ''), 
+('LD', 'datetime', 'YES', '', None, ''), 
+('DD', 'datetime', 'YES', '', None, '')]
