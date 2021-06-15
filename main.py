@@ -51,21 +51,87 @@ async def server(ctx):
     for member in ctx.guild.members:
         await ctx.send(str(member.name) + " " + str(member.id) + " " + str(member.avatar_url))
 
-# ADD ME
+
+
+
+#-------------------------------------------------------------------------------
+
+# PERSONAL ACC CREATION
+# GUILD ACC CREATION
+# BAL CHECK
+# PROFILE
+# DAILY
+# LOANS
+
+#-------------------------------------------------------------------------------
+
+
+@client.event
+async def on_ready():
+    print("Bot is ready")
+    
+
+
+# AUTO GUILD ACC CREATION
+@client.event
+async def on_guild_join(guild):
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            await channel.send("I have joined and created this server's account/")
+        break
+
+    #CHECK IF CHANNEL IS IN DGUILDS
+    boolx = sql_check_exist("DGUILDS", guild.id)
+        #IF EXISTS
+        if guildexists == True:
+            #PASS
+            pass
+        #ELSE
+        elif guildexists == False:
+            #ADD GUILD
+            sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
+            
+
+
+# ACC CREATION
 @client.command()
 async def addme(ctx, *, attr=None):
     if attr == None:
-        #add acc in users , '2020-05-28 00:00:00' => SQL,
-        
-        await ctx.send("This will create your main account")
-        now = datetime.now()
-        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
-        await ctx.send(", ".join([str(ctx.author.id), str(ctx.guild.id), str(dt_string), str(0),str(None)]))
-        add("USERS", int(ctx.author.id), [int(ctx.guild.id), str(dt_string), int(0),None])
-        await ctx.send("Your account has been created")
-        
+        #IF MESSAGE GUILD IN DGUILDS
+            userexists = sql_check_exist("DGUILDS", ctx.guild.id)
+            if userexists == True:
+                allcheckwhich = sql_search("DUSERS", ctx.author.id)
+                try:
+                    userguild = allcheckwhich[0][1]
+                except:
+                    userguild = allcheckwhich[1]
+                if userguild == ctx.guild.id:
+                    await ctx.send('You have already registered your account in this server.')
+                else:
+                    await ctx.send("You have already registered in another server. To change your server type `cc changeserver`.")
+
+            elif userexists == False:
+
+                try:
+                    await ctx.send("Are you sure you want to create your account in this server? You can only have your account registered with ONE server at a time. Type `Y` or `y` if you want to proceed.")
+                    answer = await client.wait_for(
+                        "message",
+                        timeout=30,
+                        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                        )
+                    ans = answer.content
+                    if ans in ["Y", 'y']:
+                        now = datetime.now()
+                        doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
+                        sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, None])
+
+                except asyncio.TimeoutError:
+                    await ctx.send("You did not respond.")
+
+                    
     elif attr == "bet":
         await ctx.send("This will create your betting account")
+
 
 
 @client.command()
