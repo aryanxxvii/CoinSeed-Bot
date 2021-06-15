@@ -3,7 +3,7 @@ import mysql.connector
 mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
 mycursor = mydb.cursor()
 
-def add(tablename, key=None, rec = list()):
+def sql_add(tablename, key=None, rec = list()):
     
     global mycursor, mydb
     T = tablename.upper()
@@ -17,7 +17,7 @@ def add(tablename, key=None, rec = list()):
     
     mydb.commit()
 
-def delete(tablename, key):
+def sql_delete(tablename, key):
 
     global mycursor, mydb
     T = tablename.upper()
@@ -25,7 +25,7 @@ def delete(tablename, key):
     mycursor.execute("DELETE FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
     mydb.commit()
 
-def search(tablename, key):
+def sql_search(tablename, key):
     
     global mycursor, mydb
     T = tablename.upper()
@@ -34,23 +34,36 @@ def search(tablename, key):
     x = list(mycursor.fetchone())
     return x
 
+def sql_check_exist(tablename, key):
+    global mycursor, mydb
+    T = tablename.upper()
+    table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
+    mycursor.execute("SELECT COUNT(*) FROM " + T + " WHERE " + tablename[T] + " = {}".format(key))
+    x = list(mycursor.fetchone())
+    if x[0] == 0:
+        boolx = False
+    elif x[0] == 1:
+        boolx = True
+    return boolx
+
+
 #=========================================================================
 
 # SPECIAL FUNCTIONS
 
-def addbal(duid, amount):
+def sql_addbal(duid, amount): #adds specified amount to balance
 
     global mycursor, mydb
     mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE DUID = {}".format(amount, duid))
     mydb.commit()
 
-def subbal(duid, amount):
+def sql_subbal(duid, amount): #subtracts specifies amount from balance
     
     global mycursor, mydb
     mycursor.execute("UPDATE DUSERS SET CBAL = CBAL - {} WHERE DUID = {}".format(amount, duid))
     mydb.commit()
 
-def loan_transaction(tid, donor, receiver, amount): #return 1 if success else return -1 : updates the coinbalance
+def sql_loan_transaction(tid, donor, receiver, amount): #return 1 if success else return -1 : updates the coinbalance when receiver compensates loan
     
     global mycursor, mydb
 
@@ -60,8 +73,8 @@ def loan_transaction(tid, donor, receiver, amount): #return 1 if success else re
     y = mycursor.fetchone()
     
     if amount <= x[0] and amount <= y[0]:
-        subbal(receiver, amount)
-        addbal(donor, amount)
+        sql_subbal(receiver, amount)
+        sql_addbal(donor, amount)
         mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT - {} WHERE TID = {}".format(amount, tid))
         mydb.commit()
         return 1
@@ -69,7 +82,7 @@ def loan_transaction(tid, donor, receiver, amount): #return 1 if success else re
     else:
         return -1
 
-def loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if success else return -1: adds record on success
+def sql_loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if success else return -1: creates a new loan record
     
     global mycursor, mydb
 
@@ -77,30 +90,30 @@ def loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if s
     x = mycursor.fetchone()
 
     if principle <= x[0]:
-        subbal(donor, principle)
-        addbal(receiver, principle)
+        sql_subbal(donor, principle)
+        sql_addbal(receiver, principle)
         mydb.commit()
 
-        add("DTRANSACTIONS", None, [donor, receiver, principle, principle, loandate, duedate])
+        sql_add("DTRANSACTIONS", None, [donor, receiver, principle, principle, loandate, duedate])
         return 1
     
     else:
         return -1
 
-def loan_check(tid): # return 1 if success else return -1 : Deletes the record if loan completed
+def sql_loan_check(tid): # return 1 if success else return -1 : Deletes the record if loan completed
      
     global mycursor, mydb
      
     mycursor.execute("SELECT AMOUNT FROM DTRANSACTIONS WHERE TID = {}".format(tid))
     x = mycursor.fetchone()
     if x[0] == 0:
-        delete("DTRANSACTIONS", tid)
+        sql_delete("DTRANSACTIONS", tid)
         return 1
 
-def loan_punish(today): #returns the list of users who failed to complete loan before due date
+def sql_loan_punish(today): #returns the list of users who failed to complete loan before due date
     
     global mycursor, mydb
-    mycursor.execute("SELECT RECEIVER FROM DTRANSACTIONS WHERE DUEDATE < TODAY")
+    mycursor.execute("SELECT RECEIVER FROM DTRANSACTIONS WHERE DUEDATE < '{}'".format(today))
     x = mycursor.fetchall()
 
     users = []
@@ -108,7 +121,7 @@ def loan_punish(today): #returns the list of users who failed to complete loan b
         users.append(i[0])
     return users
 
-def interest_add(rate): #returns 1 if success else returns -1 : adds the interest
+def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the interest
 
     global mycursor, mydb
     mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
