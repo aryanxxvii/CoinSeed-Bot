@@ -30,7 +30,7 @@ def search(tablename, key):
     global mycursor, mydb
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
-    mycursor.execute("SELECT * FROM " + T + " WHERE " + tablename[T] + " = {}".format(key))
+    mycursor.execute("SELECT * FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
     x = list(mycursor.fetchone())
     return x
 
