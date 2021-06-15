@@ -81,13 +81,13 @@ async def on_guild_join(guild):
         break
 
     #CHECK IF CHANNEL IS IN DGUILDS
-    boolx = sql_check_exist("DGUILDS", guild.id)
+    guildexists = sql_check_exist("DGUILDS", guild.id)
     #IF EXISTS
-    if boolx:
+    if guildexists:
         #PASS
         pass
     #ELSE
-    elif boolx:
+    elif not guildexists:
         #ADD GUILD
         sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
             
@@ -123,7 +123,7 @@ async def addme(ctx, *, attr=None):
                     if ans in ["Y", 'y']:
                         now = datetime.now()
                         doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
-                        sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, None])
+                        sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, "2000-01-01 12:00:00"])
 
                 except asyncio.TimeoutError:
                     await ctx.send("You did not respond.")
@@ -142,9 +142,6 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
         )
         embedVar.set_thumbnail(url=ctx.author.avatar_url)
         embedVar.add_field(name="UU Balance :coin:: ", value="3200", inline=False)
-        embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
-        embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
-        embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
         await ctx.send(embed=embedVar)
     elif user != None:
         embedVar = discord.Embed(
@@ -161,6 +158,8 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
 
 
 
+
+
 # DAILY  #here search the cdc from dusers table. add 24 hours using timedelta #cdc = coin daily claim
 """
 @client.command()
@@ -169,21 +168,6 @@ async def daily(ctx):
         update balance + random.randint(100, 500)
 
 """
-#BALTEST
-@client.command()
-async def baltest(ctx, amount):
-    addbal(int(ctx.author.id), int(amount))
-    data = sql_search("DUSERS", int(ctx.author.id))[0]
-    embedVar = discord.Embed(
-        title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
-        )
-    embedVar.set_thumbnail(url=ctx.author.avatar_url)
-    embedVar.add_field(name="UU Balance :coin:: ", value=str(data[3]), inline=False)
-        #embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
-        #embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
-        #embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
-    await ctx.send(embed=embedVar)
-    await ctx.send(str(data))
 
 # CHECK 
 
