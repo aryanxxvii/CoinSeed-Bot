@@ -2,8 +2,36 @@ import discord
 from discord.ext import commands
 import asyncio
 
+import random
+bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
-client = commands.Bot(command_prefix="cc", intents=intents)
+client = commands.Bot(command_prefix=bot_prefix, intents=intents)
+
+class colors:
+    default = 0
+    teal = 0x1abc9c
+    dark_teal = 0x11806a
+    green = 0x2ecc71
+    dark_green = 0x1f8b4c
+    blue = 0x3498db
+    dark_blue = 0x206694
+    purple = 0x9b59b6
+    dark_purple = 0x71368a
+    magenta = 0xe91e63
+    dark_magenta = 0xad1457
+    gold = 0xf1c40f
+    dark_gold = 0xc27c0e
+    orange = 0xe67e22
+    dark_orange = 0xa84300
+    red = 0xe74c3c
+    dark_red = 0x992d22
+    lighter_grey = 0x95a5a6
+    dark_grey = 0x607d8b
+    light_grey = 0x979c9f
+    darker_grey = 0x546e7a
+    blurple = 0x7289da
+    greyple = 0x99aab5
+
 
 @client.event
 async def on_ready():
@@ -13,18 +41,30 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
+
+
 @client.command()
 async def server(ctx):
     await ctx.send(ctx.guild.name)
     await ctx.send(ctx.guild.icon_url)
     for member in ctx.guild.members:
         await ctx.send(str(member.name) + " " + str(member.id) + " " + str(member.avatar_url))
-#test
+
+# ADD ME
 @client.command()
-async def profile(ctx, user: discord.User = None):
+async def addme(ctx, *, attr=None):
+    if attr == None:
+        #add acc in users
+        await ctx.send("This will create your main account")
+    elif attr == "bet":
+        await ctx.send("This will create your betting account")
+
+
+@client.command()
+async def profile(ctx, user: discord.User = None): #ADD LOANS
     if user == None:
         embedVar = discord.Embed(
-        title=str(ctx.author.name), description="", color = 0x5ceb48
+        title=str(ctx.author.name), description="", color = colors.green
         )
         embedVar.set_thumbnail(url=ctx.author.avatar_url)
         embedVar.add_field(name="UU Balance :coin:: ", value="3200", inline=False)
@@ -34,7 +74,7 @@ async def profile(ctx, user: discord.User = None):
         await ctx.send(embed=embedVar)
     elif user != None:
         embedVar = discord.Embed(
-        title=str(user.name), description="", color = 0x5ceb48
+        title=str(user.name), description="", color = colors.purple
         )
         embedVar.set_thumbnail(url=user.avatar_url)
         embedVar.add_field(name="UU Balance :coin:: ", value="3200", inline=False)
@@ -44,6 +84,30 @@ async def profile(ctx, user: discord.User = None):
         
         #embedVar.add_field(name="Rating :star::", value=str(score)+"/10", inline=True)
         await ctx.send(embed=embedVar)
+
+
+
+# DAILY 
+"""
+@client.command()
+async def daily(ctx):
+    if dailytime < currtime + 24:
+        update balance + random.randint(100, 500)
+
+"""
+
+# CHECK 
+
+"""
+@client.command()
+async def bal(ctx):
+    embedVar = discord.Embed(
+    title=str(ctx.author.name + "'s balance"), description="", color = colors.gold
+    )
+    embedVar.set_thumbnail(url=ctx.author.avatar_url)
+    embedVar.add_field(name="UU Wallet :coin:: ", value="3200", inline=False)   # GET SYMBOL FROM guilds
+    await ctx.send(embed=embedVar)
+"""
 
 
 @client.command()
