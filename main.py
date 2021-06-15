@@ -161,7 +161,7 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
 
 
 
-# DAILY  #here search the cdc from dusers table. add 24 hours using timedelta
+# DAILY  #here search the cdc from dusers table. add 24 hours using timedelta #cdc = coin daily claim
 """
 @client.command()
 async def daily(ctx):
