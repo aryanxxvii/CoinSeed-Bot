@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
-from quicksql_cmd import *
+from sqlfunc import *
 import random
 from datetime import datetime
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
@@ -82,14 +82,14 @@ async def on_guild_join(guild):
 
     #CHECK IF CHANNEL IS IN DGUILDS
     boolx = sql_check_exist("DGUILDS", guild.id)
-        #IF EXISTS
-        if guildexists == True:
-            #PASS
-            pass
-        #ELSE
-        elif guildexists == False:
-            #ADD GUILD
-            sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
+    #IF EXISTS
+    if boolx:
+        #PASS
+        pass
+    #ELSE
+    elif boolx:
+        #ADD GUILD
+        sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
             
 
 
@@ -161,7 +161,7 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
 
 
 
-# DAILY 
+# DAILY  #here search the cdc from dusers table. add 24 hours using timedelta
 """
 @client.command()
 async def daily(ctx):
@@ -173,7 +173,7 @@ async def daily(ctx):
 @client.command()
 async def baltest(ctx, amount):
     addbal(int(ctx.author.id), int(amount))
-    data = search("USERS", int(ctx.author.id))[0]
+    data = sql_search("DUSERS", int(ctx.author.id))[0]
     embedVar = discord.Embed(
         title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
         )
@@ -190,7 +190,7 @@ async def baltest(ctx, amount):
 @client.command()
 async def bal(ctx):
     #disuserid, guildid, doc, coinbal, dt = search("USERS", int(ctx.author.id))
-    data = search("USERS", int(ctx.author.id))[0]
+    data = sql_search("DUSERS", int(ctx.author.id))[0]
     embedVar = discord.Embed(
         title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
         )
