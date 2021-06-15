@@ -126,3 +126,4 @@ def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the int
     global mycursor, mydb
     mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
     mydb.commit()
+
