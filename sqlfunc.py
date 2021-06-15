@@ -38,6 +38,18 @@ def search(tablename, key):
 
 # SPECIAL FUNCTIONS
 
+def addbal(duid, amount):
+
+    global mycursor, mydb
+    mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE DUID = {}".format(amount, duid))
+    mydb.commit()
+
+def subbal(duid, amount):
+    
+    global mycursor, mydb
+    mycursor.execute("UPDATE DUSERS SET CBAL = CBAL - {} WHERE DUID = {}".format(amount, duid))
+    mydb.commit()
+
 def loan_transaction(tid, donor, receiver, amount): #return 1 if success else return -1 : updates the coinbalance
     
     global mycursor, mydb
@@ -48,8 +60,8 @@ def loan_transaction(tid, donor, receiver, amount): #return 1 if success else re
     y = mycursor.fetchone()
     
     if amount <= x[0] and amount <= y[0]:
-        mycursor.execute("UPDATE DUSERS SET CBAL = CBAL - {} WHERE DUID = {}".format(amount, receiver))
-        mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE DUID = {}".format(amount, donor))
+        subbal(receiver, amount)
+        addbal(donor, amount)
         mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT - {} WHERE TID = {}".format(amount, tid))
         mydb.commit()
         return 1
@@ -65,8 +77,8 @@ def loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if s
     x = mycursor.fetchone()
 
     if principle <= x[0]:
-        mycursor.execute("UPDATE DUSERS SET CBAL = CBAL - {} WHERE DUID = {}".format(principle, donor))
-        mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE DUID = {}".format(principle, receiver))
+        subbal(donor, principle)
+        addbal(receiver, principle)
         mydb.commit()
 
         add("DTRANSACTIONS", None, [donor, receiver, principle, principle, loandate, duedate])
@@ -100,3 +112,4 @@ def interest_add(rate): #returns 1 if success else returns -1 : adds the interes
 
     global mycursor, mydb
     mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
+    mydb.commit()
