@@ -95,3 +95,8 @@ def loan_punish(today): #returns the list of users who failed to complete loan b
     for i in x:
         users.append(i[0])
     return users
+
+def interest_add(rate): #returns 1 if success else returns -1 : adds the interest
+
+    global mycursor, mydb
+    mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
