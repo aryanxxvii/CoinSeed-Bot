@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 import asyncio
-
+from quicksql_cmd import *
 import random
+from datetime import datetime
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=bot_prefix, intents=intents)
@@ -37,7 +38,7 @@ class colors:
 async def on_ready():
     print("Bot is ready")
 
-@client.command(aliased=[" ping"])
+@client.command()
 async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
@@ -54,8 +55,15 @@ async def server(ctx):
 @client.command()
 async def addme(ctx, *, attr=None):
     if attr == None:
-        #add acc in users
+        #add acc in users , '2020-05-28 00:00:00' => SQL,
+        
         await ctx.send("This will create your main account")
+        now = datetime.now()
+        dt_string = now.strftime("%Y-%m-%d %H:%M:%S")
+        await ctx.send(", ".join([str(ctx.author.id), str(ctx.guild.id), str(dt_string), str(0),str(None)]))
+        add("USERS", int(ctx.author.id), [int(ctx.guild.id), str(dt_string), int(0),None])
+        await ctx.send("Your account has been created")
+        
     elif attr == "bet":
         await ctx.send("This will create your betting account")
 
@@ -95,19 +103,38 @@ async def daily(ctx):
         update balance + random.randint(100, 500)
 
 """
+#BALTEST
+@client.command()
+async def baltest(ctx, amount):
+    addbal(int(ctx.author.id), int(amount))
+    data = search("USERS", int(ctx.author.id))[0]
+    embedVar = discord.Embed(
+        title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
+        )
+    embedVar.set_thumbnail(url=ctx.author.avatar_url)
+    embedVar.add_field(name="UU Balance :coin:: ", value=str(data[3]), inline=False)
+        #embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
+        #embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
+        #embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
+    await ctx.send(embed=embedVar)
+    await ctx.send(str(data))
 
 # CHECK 
 
-"""
 @client.command()
 async def bal(ctx):
+    #disuserid, guildid, doc, coinbal, dt = search("USERS", int(ctx.author.id))
+    data = search("USERS", int(ctx.author.id))[0]
     embedVar = discord.Embed(
-    title=str(ctx.author.name + "'s balance"), description="", color = colors.gold
-    )
+        title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
+        )
     embedVar.set_thumbnail(url=ctx.author.avatar_url)
-    embedVar.add_field(name="UU Wallet :coin:: ", value="3200", inline=False)   # GET SYMBOL FROM guilds
+    embedVar.add_field(name="UU Balance :coin:: ", value=str(data[3]), inline=False)
+        #embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
+        #embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
+        #embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
     await ctx.send(embed=embedVar)
-"""
+    await ctx.send(str(data))
 
 
 @client.command()
