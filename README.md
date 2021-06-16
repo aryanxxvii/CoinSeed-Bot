@@ -11,3 +11,13 @@
 - [ ]TIPS
 - [ ]CHANGE SYMBOL/NAME
 - [ ]Remove Symbols + names hardcoding in cc profile
+
+- [ ] Mercury
+- [x] Venus
+- [x] Earth (Orbit/Moon)
+- [x] Mars
+- [ ] Jupiter
+- [ ] Saturn
+- [ ] Uranus
+- [ ] Neptune
+- [ ] Comet Haley
