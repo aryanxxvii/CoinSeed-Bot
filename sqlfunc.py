@@ -63,7 +63,7 @@ def sql_user_cngserver(duid, newguid):
     mycursor.execute("UPDATE DUSERS SET GUID = {} WHERE DUID = {}".format(newguid, duid))
     mydb.commit()
 
-def sql_update_dguild(key, coinname, coinsymbol):
+def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 
     global mycursor, mydb
     mycursor.execute("UPDATE DGUILDS SET CNAM = '{}' , CSYM = '{}' WHERE GUID = {}".format(coinname, coinsymbol, key))
