@@ -3,7 +3,7 @@ from discord.ext import commands
 import asyncio
 from sqlfunc import *
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=bot_prefix, intents=intents)
@@ -138,6 +138,39 @@ async def addme(ctx, *, attr=None):
                     
     elif attr == "bet":
         await ctx.send("This will create your betting account")
+
+
+
+
+@client.command()
+async def daily(ctx):
+    #CHECK TIME
+    fetchdata = sql_search("DUSERS", ctx.author.id)
+    dt_storedtime = fetchdata[4]
+    nextdaily = dt_storedtime + timedelta(hours=24)
+    nowtime = datetime.now()
+    if nowtime > nextdaily:
+        amount = random.randrange(100, 600) 
+        sql_addbal(ctx.author.id, amount)
+        if amount in range(100, 250):
+            await ctx.send("**+{}** :coin: have been added to your account.".format(amount))
+        elif amount in range(250, 450):
+            await ctx.send("Nice! **+{}** :coin: have been added to your account!".format(amount))
+        elif amount in range(450, 600):
+            await ctx.send("AWESOME! **+{}** have been added to your account!!".format(amount))
+    else:
+        waittime = nextdaily - nowtime
+        acttime = str(waittime).split(".")[0]
+        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+        str_waittime_hour = dt_acttime.strftime("%H")
+        str_waittime_min = dt_acttime.strftime("%M")
+        await ctx.send("You have to wait another {} hours {} minutes".format(str_waittime_hour, str_waittime_min))
+        
+        
+    
+    #IF TIME NOW GREATER THAN 24 + OL
+        #ADD RANDOM BALANCE BW 100 to 500
+    
 
 
 
