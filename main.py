@@ -148,36 +148,99 @@ async def addme(ctx, *, attr=None):
 @client.command()
 async def daily(ctx):
     #CHECK TIME
-    fetchdata = sql_search("DUSERS", ctx.author.id)
-    dt_storedtime = fetchdata[4]
-    nextdaily = dt_storedtime + timedelta(hours=24)
-    nowtime = datetime.now()
-    if nowtime > nextdaily:
-        amount = random.randrange(100, 600) 
-        sql_addbal(ctx.author.id, amount)
-        if amount in range(100, 250):
-            await ctx.send("**+{}** :coin: have been added to your account.".format(amount))
-        elif amount in range(250, 450):
-            await ctx.send("Nice! **+{}** :coin: have been added to your account!".format(amount))
-        elif amount in range(450, 600):
-            await ctx.send("AWESOME! **+{}** :coin: have been added to your account!!".format(amount))
-        
-        st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
-        sql_update_date(ctx.author.id, st_now)
-        
-    else:
-        waittime = nextdaily - nowtime
-        acttime = str(waittime).split(".")[0]
-        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-        str_waittime_hour = dt_acttime.strftime("%H")
-        str_waittime_min = dt_acttime.strftime("%M")
-        await ctx.send("You have to wait another **{} hours {} minutes**".format(str_waittime_hour, str_waittime_min))
-        
-        
+    try:
+        fetchdata = sql_search("DUSERS", ctx.author.id)
+        duid, guid, doc, cbal, cdc = fetchdata
+        if ctx.guild.id == guid:
+            dt_storedtime = cdc
+            nextdaily = dt_storedtime + timedelta(hours=24)
+            nowtime = datetime.now()
+            if nowtime > nextdaily:
+                amount = random.randrange(100, 600) 
+                sql_addbal(ctx.author.id, amount)
+                if amount in range(100, 250):
+                    await ctx.send("**+{}** :coin: have been added to your account.".format(amount))
+                elif amount in range(250, 450):
+                    await ctx.send("Nice! **+{}** :coin: have been added to your account!".format(amount))
+                elif amount in range(450, 600):
+                    await ctx.send("AWESOME! **+{}** :coin: have been added to your account!!".format(amount))
+                
+                st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
+                sql_update_date(ctx.author.id, st_now)
+                
+            else:
+                waittime = nextdaily - nowtime
+                acttime = str(waittime).split(".")[0]
+                dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                str_waittime_hour = dt_acttime.strftime("%H")
+                str_waittime_min = dt_acttime.strftime("%M")
+                await ctx.send("You have to wait another **{} hours {} minutes**".format(str_waittime_hour, str_waittime_min))
+            
+        else:
+            await ctx.send("You do not have an account in this server.")
+    except:
+        await ctx.send("You don't have an account yet! Type `cc addme` to create one!")
     
     #IF TIME NOW GREATER THAN 24 + OL
         #ADD RANDOM BALANCE BW 100 to 500
-    
+
+
+
+@commands.has_permissions(ban_members=True, kick_members=True) 
+
+
+@client.command(aliases=["csi"])
+async def changeserverinfo(ctx):
+    if ctx.author.guild_permissions.manage_guild:
+        try:
+            duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+            if guid == ctx.guild.id:
+                guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+                await ctx.send("Current Coin-Name: {}\nCurrent Coin-Symbol: {}".format(cnam, csym))
+                await ctx.send("What do you want your Server's **new** Coin-Name to be?")
+                try:
+                    coin_inp = await client.wait_for(
+                        "message",
+                        timeout=30,
+                        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                        )
+                    coinname = coin_inp.content
+                    try:
+                        await ctx.send("Alright, what do you want your Server's **new** Coin-Symbol to be?")
+                        sym_inp = await client.wait_for(
+                            "message",
+                            timeout=30,
+                            check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                            )
+                        coinsym = sym_inp.content
+                        print("<"+coinsym+">")
+                        sql_guild_cngcoin(guid, coinname, coinsym)
+                        guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+                        servname = ctx.guild.name
+                        icon_url = ctx.guild.icon_url
+                        print(csym)
+                        
+                        embedVar = discord.Embed(
+                        title="{}'s Coin System Changed!".format(servname), description="", color = colors.green
+                        )
+                        embedVar.set_thumbnail(url=icon_url)
+                        embedVar.add_field(name="New Coin-Name", value=str(cnam), inline=False)
+                        embedVar.add_field(name="New Coin-Symbol", value=csym, inline=False)
+                        await ctx.send(embed=embedVar)
+                        
+                    except asyncio.TimeoutError:
+                        await ctx.send("You did not respond.")
+                        
+                except asyncio.TimeoutError:
+                    await ctx.send("You did not respond.")                  
+        except:
+            await ctx.send("You don't have an account in this server!")
+    else:
+        await ctx.send("Sorry! You don't have the permissions!")
+                    
+
+
+
 
 @client.command()
 async def tables(ctx, table):
@@ -189,7 +252,7 @@ async def tables(ctx, table):
         st_f = " | ".join(st_f_one)
         await ctx.send("`"+st_f+"`")
        
-       
+
     
 
 @client.command()
