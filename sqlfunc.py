@@ -57,6 +57,12 @@ def sql_show_table(tablename): #returns a list of tuples
 
 # SPECIAL FUNCTIONS
 
+def sql_user_cngserver(duid, newguid):
+
+    global mycursor, mydb
+    mycursor.execute("UPDATE DUSERS SET GUID = {} WHERE DUID = {}".format(newguid, duid))
+    mydb.commit()
+
 def sql_update_dguild(key, coinname, coinsymbol):
 
     global mycursor, mydb
