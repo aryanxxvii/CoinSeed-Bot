@@ -38,7 +38,7 @@ def sql_check_exist(tablename, key):
     global mycursor, mydb
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
-    mycursor.execute("SELECT COUNT(*) FROM " + T + " WHERE " + tablename[T] + " = {}".format(key))
+    mycursor.execute("SELECT COUNT(*) FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
     x = list(mycursor.fetchone())
     if x[0] == 0:
         boolx = False
