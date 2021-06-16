@@ -4,6 +4,9 @@ import asyncio
 from sqlfunc import *
 import random
 from datetime import datetime, timedelta
+import emoji
+
+
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=bot_prefix, intents=intents)
@@ -213,12 +216,18 @@ async def changeserverinfo(ctx):
                             check=lambda message: message.author == ctx.author and message.channel == ctx.channel
                             )
                         coinsym = sym_inp.content
-                        print("<"+coinsym+">")
-                        sql_guild_cngcoin(guid, coinname, coinsym)
+                        
+                        try:
+                            st_coinsym = emoji.demojize(coinsym)
+                        except:
+                            st_coinsym = coinsym
+                            
+                        sql_guild_cngcoin(guid, coinname, st_coinsym)
+
                         guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
                         servname = ctx.guild.name
                         icon_url = ctx.guild.icon_url
-                        print(csym)
+                       
                         
                         embedVar = discord.Embed(
                         title="{}'s Coin System Changed!".format(servname), description="", color = colors.green
