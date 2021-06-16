@@ -57,6 +57,12 @@ def sql_show_table(tablename): #returns a list of tuples
 
 # SPECIAL FUNCTIONS
 
+def sql_update_date(duid, today):
+
+    global mycursor, mydb
+    mycursor.execute("UPDATE DUSERS SET CDC = '{}' WHERE DUID = '{}'".format(today, duid))
+    mydb.commit()
+
 def sql_addbal(duid, amount): #adds specified amount to balance
 
     global mycursor, mydb
