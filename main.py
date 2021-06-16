@@ -56,12 +56,15 @@ async def server(ctx):
 
 #-------------------------------------------------------------------------------
 
-# PERSONAL ACC CREATION
-# GUILD ACC CREATION
-# BAL CHECK
-# PROFILE
-# DAILY
-# LOANS
+# [x]PERSONAL ACC CREATION
+# [x]GUILD ACC CREATION
+# [ ]BAL CHECK
+# [x]PROFILE
+# [x]DAILY
+# [ ]LOANS
+# [ ]CHANGE SERVER
+# [ ]CHANGE SYMBOL/NAME
+# [ ]TIPS
 
 #-------------------------------------------------------------------------------
 
@@ -157,14 +160,18 @@ async def daily(ctx):
         elif amount in range(250, 450):
             await ctx.send("Nice! **+{}** :coin: have been added to your account!".format(amount))
         elif amount in range(450, 600):
-            await ctx.send("AWESOME! **+{}** have been added to your account!!".format(amount))
+            await ctx.send("AWESOME! **+{}** :coin: have been added to your account!!".format(amount))
+        
+        st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
+        sql_update_date(ctx.author.id, st_now)
+        
     else:
         waittime = nextdaily - nowtime
         acttime = str(waittime).split(".")[0]
         dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
         str_waittime_hour = dt_acttime.strftime("%H")
         str_waittime_min = dt_acttime.strftime("%M")
-        await ctx.send("You have to wait another {} hours {} minutes".format(str_waittime_hour, str_waittime_min))
+        await ctx.send("You have to wait another **{} hours {} minutes**".format(str_waittime_hour, str_waittime_min))
         
         
     
@@ -172,42 +179,80 @@ async def daily(ctx):
         #ADD RANDOM BALANCE BW 100 to 500
     
 
-
+@client.command()
+async def tables(ctx, table):
+    f_all = sql_show_table(table)
+    for f_one in f_all:
+        st_f_one = []
+        for c in f_one:
+            st_f_one.append(str(c))
+        st_f = " | ".join(st_f_one)
+        await ctx.send("`"+st_f+"`")
+       
+       
+    
 
 @client.command()
 async def profile(ctx, user: discord.User = None): #ADD LOANS
+    #CHECK IF USER EXISTS FIRST !!!
     if user == None:
-        embedVar = discord.Embed(
-        title=str(ctx.author.name), description="", color = colors.green
-        )
-        embedVar.set_thumbnail(url=ctx.author.avatar_url)
-        embedVar.add_field(name="UU Balance :coin:: ", value="3200", inline=False)
-        await ctx.send(embed=embedVar)
+        try:
+            user_data_all = sql_search("DUSERS", ctx.author.id)
+            duid, guid, doc, cbal, cdc = user_data_all
+            if guid == ctx.guild.id:
+                dt_storedtime = cdc
+                st_doc = doc.strftime("%d-%m-%Y")
+                nextdaily = dt_storedtime + timedelta(hours=24)
+                nowtime = datetime.now()
+                waittime = nextdaily - nowtime
+                acttime = str(waittime).split(".")[0]
+                dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                str_waittime_hour = dt_acttime.strftime("%H")
+                str_waittime_min = dt_acttime.strftime("%M")
+
+                name = ctx.author.name
+                avatar_url = ctx.author.avatar_url
+                
+                embedVar = discord.Embed(
+                title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
+                )
+                embedVar.set_thumbnail(url=avatar_url)
+                embedVar.add_field(name="Coin Balance :coin:: ", value=str(cbal), inline=False)
+                embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
+                await ctx.send(embed=embedVar)
+        except:
+            await ctx.send("Your account does not exist! To create one, use `cc addme`")
+
     elif user != None:
-        embedVar = discord.Embed(
-        title=str(user.name), description="", color = colors.purple
-        )
-        embedVar.set_thumbnail(url=user.avatar_url)
-        embedVar.add_field(name="UU Balance :coin:: ", value="3200", inline=False)
-        embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
-        embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
-        embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
+        user_data_all = sql_search("DUSERS", user.id)
+        duid, guid, doc, cbal, cdc = user_data_all
+        try:
+            st_doc = doc.strftime("%d-%m-%Y")
+            dt_storedtime = cdc
+            nextdaily = dt_storedtime + timedelta(hours=24)
+            nowtime = datetime.now()
+            waittime = nextdaily - nowtime
+            acttime = str(waittime).split(".")[0]
+            dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+            str_waittime_hour = dt_acttime.strftime("%H")
+            str_waittime_min = dt_acttime.strftime("%M")
+            
+            name = user.name
+            avatar_url = user.avatar_url
+            
+            
+            embedVar = discord.Embed(
+            title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
+            )
+            embedVar.set_thumbnail(url=avatar_url)
+            embedVar.add_field(name="Coin Balance :coin:: ", value=str(cbal), inline=False)
+            embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
         
-        #embedVar.add_field(name="Rating :star::", value=str(score)+"/10", inline=True)
-        await ctx.send(embed=embedVar)
+            await ctx.send(embed=embedVar)
+    
+        except:
+            await ctx.send("There is no account with this name in this server.")
 
-
-
-
-
-# DAILY  #here search the cdc from dusers table. add 24 hours using timedelta #cdc = coin daily claim
-"""
-@client.command()
-async def daily(ctx):
-    if dailytime < currtime + 24:
-        update balance + random.randint(100, 500)
-
-"""
 
 # CHECK 
 

@@ -49,7 +49,7 @@ def sql_check_exist(tablename, key):
 def sql_show_table(tablename): #returns a list of tuples
     
     global mycursor, mydb
-    mycursor.execute("SELECT * FROM " + tablename + ";")
+    mycursor.execute("SELECT * FROM " + tablename.upper() + ";")
     x = mycursor.fetchall()
     return x
 
