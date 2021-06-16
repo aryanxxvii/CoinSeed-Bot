@@ -81,7 +81,7 @@ async def on_guild_join(guild):
             await channel.send("I have joined and created this server's account.")
         break
 
-    #CHECK IF CHANNEL IS IN DGUILDS
+    #CHECK IF GUILD IS IN DGUILDS
     guildexists = sql_check_exist("DGUILDS", guild.id)
     #IF EXISTS
     if guildexists:
@@ -99,7 +99,7 @@ async def on_guild_join(guild):
 async def addme(ctx, *, attr=None):
     if attr == None:
         #IF MESSAGE GUILD IN DGUILDS
-            userexists = sql_check_exist("DGUILDS", ctx.guild.id)
+            userexists = sql_check_exist("DUSERS", ctx.author.id)
             if userexists:
                 allcheckwhich = sql_search("DUSERS", ctx.author.id)
                 #FIND USER GUILD IN DUSERS
@@ -128,6 +128,7 @@ async def addme(ctx, *, attr=None):
                         doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
                         #CREATE ACCOUNT
                         sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, "2000-01-01 12:00:00"])
+                        await ctx.send("Your account was succesfully created.")
                     else:
                         await ctx.send("Your account was not created.")
                 #CHECK FOR TIMEOUT ERROR
