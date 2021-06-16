@@ -76,8 +76,9 @@ async def on_ready():
 @client.event
 async def on_guild_join(guild):
     for channel in guild.text_channels:
+        #IF MESSAGE PERM,  TYPE THIS...
         if channel.permissions_for(guild.me).send_messages:
-            await channel.send("I have joined and created this server's account/")
+            await channel.send("I have joined and created this server's account.")
         break
 
     #CHECK IF CHANNEL IS IN DGUILDS
@@ -99,8 +100,9 @@ async def addme(ctx, *, attr=None):
     if attr == None:
         #IF MESSAGE GUILD IN DGUILDS
             userexists = sql_check_exist("DGUILDS", ctx.guild.id)
-            if userexists == True:
+            if userexists:
                 allcheckwhich = sql_search("DUSERS", ctx.author.id)
+                #FIND USER GUILD IN DUSERS
                 try:
                     userguild = allcheckwhich[0][1]
                 except:
@@ -110,9 +112,9 @@ async def addme(ctx, *, attr=None):
                 else:
                     await ctx.send("You have already registered in another server. To change your server type `cc changeserver`.")
 
-            elif userexists == False:
-
+            elif not userexists:
                 try:
+                    #WAIT FOR CONFIRMATION
                     await ctx.send("Are you sure you want to create your account in this server? You can only have your account registered with ONE server at a time. Type `Y` or `y` if you want to proceed.")
                     answer = await client.wait_for(
                         "message",
@@ -120,11 +122,15 @@ async def addme(ctx, *, attr=None):
                         check=lambda message: message.author == ctx.author and message.channel == ctx.channel
                         )
                     ans = answer.content
+                    #IF CONFIRMED
                     if ans in ["Y", 'y']:
                         now = datetime.now()
                         doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
+                        #CREATE ACCOUNT
                         sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, "2000-01-01 12:00:00"])
-
+                    else:
+                        await ctx.send("Your account was not created.")
+                #CHECK FOR TIMEOUT ERROR
                 except asyncio.TimeoutError:
                     await ctx.send("You did not respond.")
 
