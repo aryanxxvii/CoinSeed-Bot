@@ -9,6 +9,6 @@
 - [ ] LOANS
 - [ ] CHANGE SERVER
 - [ ] TIPS
-- [ ] CHANGE SYMBOL/NAME
+- [x] CHANGE SYMBOL/NAME
 - [ ] Remove Symbols + names hardcoding in cc profile
 
