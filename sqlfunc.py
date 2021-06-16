@@ -57,6 +57,12 @@ def sql_show_table(tablename): #returns a list of tuples
 
 # SPECIAL FUNCTIONS
 
+def sql_update_dguild(key, coinname, coinsymbol):
+
+    global mycursor, mydb
+    mycursor.execute("UPDATE DGUILDS SET CNAM = '{}' , CSYM = '{}' WHERE GUID = {}".format(coinname, coinsymbol, key))
+    mydb.commit()
+
 def sql_update_date(duid, today):
 
     global mycursor, mydb
