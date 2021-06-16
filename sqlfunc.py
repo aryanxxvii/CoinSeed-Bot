@@ -46,6 +46,12 @@ def sql_check_exist(tablename, key):
         boolx = True
     return boolx
 
+def sql_show_table(tablename): #returns a list of tuples
+    
+    global mycursor, mydb
+    mycursor.execute("SELECT * FROM " + tablename + ";")
+    x = mycursor.fetchall()
+    return x
 
 #=========================================================================
 
