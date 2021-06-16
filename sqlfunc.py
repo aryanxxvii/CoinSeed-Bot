@@ -66,7 +66,7 @@ def sql_user_cngserver(duid, newguid):
 def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 
     global mycursor, mydb
-    mycursor.execute("UPDATE DGUILDS SET CNAM = '{}' , CSYM = '{}' WHERE GUID = {}".format(coinname, coinsymbol, key))
+    mycursor.execute("UPDATE DGUILDS SET CNAM = '{}' , CSYM = '{}' WHERE GUID = {}".format(newcoinname, newcoinsymbol, key))
     mydb.commit()
 
 def sql_update_date(duid, today):
