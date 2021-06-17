@@ -54,9 +54,10 @@ async def ping(ctx):
 # [x]GUILD ACC CREATION
 # [ ]BAL CHECK
 # [x]PROFILE
+# [x]SERVER PRoFILE
 # [x]DAILY
 # [ ]LOANS
-# [ ]CHANGE SERVER
+# [x]CHANGE SERVER
 # [x]CHANGE SYMBOL/NAME
 # [ ]TIPS
 # [x]REMOVE HARDCODING
