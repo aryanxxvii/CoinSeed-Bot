@@ -239,8 +239,12 @@ async def changeserverinfo(ctx):
                         
                         try:
                             st_coinsym = emoji.demojize(coinsym)
+                            print("1")
+                            print(st_coinsym)
                         except:
                             st_coinsym = coinsym
+                            print("2")
+                            print(st_coinsym)
                             
                         sql_guild_cngcoin(guid, coinname, st_coinsym)
 
