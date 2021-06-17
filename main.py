@@ -319,10 +319,16 @@ async def profile(ctx, user: discord.User = None):
             except:
                 await ctx.send("There is no account with this name in this server.")
         else:
-            await ctx.send("There is no account with this name in this server.")
+            if user == ctx.author:
+                await ctx.send("You have already have an account on a different server! To change your server, type `cc changeserver` or `cc cs`")
+            else:
+                await ctx.send("There is no account with this name in this server.")
 
     except:
-        await ctx.send("There is no account with this name in this server.")
+        if user == ctx.author:
+            await ctx.send("Your account does not exist! To create one, use `cc addme`")
+        else:
+            await ctx.send("There is no account with this name in this server.")
 
 
     
@@ -378,7 +384,7 @@ async def legacyprofile(ctx, user: discord.User = None): #ADD LOANS
                 embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
                 await ctx.send(embed=embedVar)
             else:
-                await ctx.send("You don't have an account in this server!")
+                await ctx,send("You don't have an account in this server!")
         except:
             await ctx.send("Your account does not exist! To create one, use `cc addme`")
 
