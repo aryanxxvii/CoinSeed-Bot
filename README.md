@@ -3,12 +3,12 @@
 ## TODO
 - [x] PERSONAL ACC CREATION
 - [x] GUILD ACC CREATION
-- [ ] BAL CHECK
+- [ ] BAL CHECK [Very Easy to make]
 - [x] PROFILE
 - [x] DAILY
 - [ ] LOANS
 - [x] CHANGE SERVER
-- [ ] TIPS
+- [x] TIPS
 - [x] CHANGE SYMBOL/NAME
 - [x] Remove Symbols + names hardcoding in cc profile
 - [x] SERVER PROFILE
