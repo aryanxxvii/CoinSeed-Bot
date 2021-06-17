@@ -290,6 +290,23 @@ async def tables(ctx, table):
        
 
 
+@client.command(aliases=["t"])
+async def tip(ctx, user: discord.User = None, amount = None):
+    try:
+        if sql_check_exist("DUSERS", ctx.author.id): #CHECK GIVER
+            if sql_check_exist("DUSERS", user.id):  #CHECK RECIEVER
+                duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+                duidr, guidr, docr, cbalr, cdcr = sql_search("DUSERS", user.id)
+                if guid == guidr:
+                    if cbal >= int(amount):
+                        await ctx.send("Are you sure you want to give {} {} {}?".format(user.mention, ))
+        
+
+
+
+
+
+
 
 @client.command(aliases=["pr"])
 async def profile(ctx, user: discord.User = None):
