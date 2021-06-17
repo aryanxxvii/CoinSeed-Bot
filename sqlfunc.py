@@ -62,6 +62,15 @@ def sql_show_table(tablename): #returns a list of tuples
 
 # SPECIAL FUNCTIONS
 
+def sql_server_topusers(guid): #list the players in the server, csym
+
+    global mycursor, mydb
+    mycursor.execute("SELECT CSYM FROM DGUIDS WHERE GUID = {}".format(guid))
+    csym = mycursor.fetchone()[0]
+    mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL")
+    user_list = mycursor.fetchall()
+    return user_list, csym
+
 def sql_user_cngserver(duid, newguid):
 
     global mycursor, mydb
