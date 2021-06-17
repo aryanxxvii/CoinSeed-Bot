@@ -291,16 +291,36 @@ async def tables(ctx, table):
 @client.command(aliases=["t"])
 async def tip(ctx, user: discord.User = None, amount = None):
     try:
-        if sql_check_exist("DUSERS", ctx.author.id): #CHECK GIVER
-            if sql_check_exist("DUSERS", user.id):  #CHECK RECIEVER
-                duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
-                duidr, guidr, docr, cbalr, cdcr = sql_search("DUSERS", user.id)
-                if guid == guidr:
-                    if cbal >= int(amount):
-                        await ctx.send("Are you sure you want to give {} {} {}?".format(user.mention, ))
-        
-
-
+        if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id): #CHECK GIVER and RECIEVER
+            duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+            duidr, guidr, docr, cbalr, cdcr = sql_search("DUSERS", user.id)
+            if guid == guidr:
+                if cbal >= int(amount):
+                    guid, cnam, csym = sql_search("DGUILDS", guid)
+                    await ctx.send("Are you sure you want to give {} {} {}? Type `confirm`.".format(user.mention, amount, csym))
+                    try:
+                        conf = await client.wait_for(
+                            "message",
+                            timeout=30,
+                            check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                            )
+                        confcon = conf.content
+                        if confcon.lower() in ["confirm", "confirm "]:
+                            sql_addbal(user.id, amount)
+                            sql_subbal(ctx.author.id, amount)
+                            await ctx.send("{} {} have been transfered to {}'s account!".format(amount, csym, user.mention))
+                        else:
+                            await ctx.send("Procedure cancelled.")
+                    except asyncio.TimeoutError:
+                        await ctx.send("You did not respond.")
+                else:
+                    await ctx.send("You don't have enough balance in your account!")
+            else:
+                await ctx.send("There is no account with this name in this server.")
+        else:
+            await ctx.send("Both the sender and the reciever should have an account!")
+    except:
+        await ctx.send("You did not use the correct format => `cc tip <tag-user> <amount>`")
 
 
 @client.command(aliases=["pr"])
@@ -342,7 +362,7 @@ async def profile(ctx, user: discord.User = None):
                 embedVar.set_thumbnail(url=avatar_url)
                 embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
                 embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-            
+                
                 await ctx.send(embed=embedVar)
         
             except:
@@ -499,7 +519,7 @@ async def bet(ctx):
 
 
 
-client.run("ODUzNTcwMjg0OTE2NTcyMTcw.YMXTRg.yVOUfaAivE9oe9hCfOx9S4aFObc")
+client.run("ODUzNTcwMjg0OTE2NTcyMTcw.YMXTRg.zqtJBlIi-oo3wqUOVYUozYho3Lk")
 
 
 
