@@ -1,11 +1,15 @@
 import discord
 from discord.ext import commands
 import asyncio
-from sqlfunc import *
+
 import random
 from datetime import datetime, timedelta
 import emoji
-
+try:
+    from sqlfunc import *
+except:
+    print("Server Error")
+    
 
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
@@ -235,16 +239,15 @@ async def changeserverinfo(ctx):
                             timeout=30,
                             check=lambda message: message.author == ctx.author and message.channel == ctx.channel
                             )
-                        coinsym = sym_inp.content
+                        old_coinsym = sym_inp.content
                         
                         try:
-                            st_coinsym = emoji.demojize(coinsym)
-                            print("1")
+                            print(old_coinsym)
+                            st_coinsym = emoji.demojize(old_coinsym, use_aliases=True)
                             print(st_coinsym)
                         except:
-                            st_coinsym = coinsym
-                            print("2")
-                            print(st_coinsym)
+                            print("not work ")
+                        
                             
                         sql_guild_cngcoin(guid, coinname, st_coinsym)
 
@@ -262,7 +265,7 @@ async def changeserverinfo(ctx):
                         await ctx.send(embed=embedVar)
                         
                     except asyncio.TimeoutError:
-                        await ctx.send("You did not respond.")
+                        await ctx.send("You did not respond with an emoji.")
                         
                 except asyncio.TimeoutError:
                    await ctx.send("You did not respond.")                  
@@ -279,16 +282,28 @@ async def changeserverinfo(ctx):
 
 
 
-
 @client.command()
-async def tables(ctx, table):
-    f_all = sql_show_table(table)
-    for f_one in f_all:
-        st_f_one = []
-        for c in f_one:
-            st_f_one.append(str(c))
-        st_f = " | ".join(st_f_one)
-        await ctx.send("`"+st_f+"`")
+async def ce(ctx):
+    await ctx.send("Alright, what do you want your Server's **new** Coin-Symbol to be?")
+    sym_inp = await client.wait_for(
+        "message",
+        timeout=30,
+        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+        )
+    print(sym_inp.content)
+    
+
+    
+
+#@client.command()
+#async def tables(ctx, table):
+#    f_all = sql_show_table(table)
+#    for f_one in f_all:
+#        st_f_one = []
+#        for c in f_one:
+#            st_f_one.append(str(c))
+#        st_f = " | ".join(st_f_one)
+#        await ctx.send("`"+st_f+"`")
        
 
 
@@ -434,36 +449,34 @@ async def changeserver(ctx):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 # CHECK 
 
 @client.command()
-async def bal(ctx):
-    #disuserid, guildid, doc, coinbal, dt = search("USERS", int(ctx.author.id))
-    data = sql_search("DUSERS", int(ctx.author.id))[0]
-    embedVar = discord.Embed(
-        title=str(ctx.author.name), description=str(ctx.author.id)+" "+str(ctx.guild.id), color = colors.green
-        )
-    embedVar.set_thumbnail(url=ctx.author.avatar_url)
-    embedVar.add_field(name="UU Balance :coin:: ", value=str(data[3]), inline=False)
-        #embedVar.add_field(name="Current Bets :money_with_wings::", value="`England | 2 - 1 | 300 UU`\n`Tie | 1 - 1 | 300 UU`", inline=False)
-        #embedVar.add_field(name="Bets Won :thumbsup:: ", value="1", inline=False)
-        #embedVar.add_field(name="Euro Cup Favorite :trophy::", value="Germany:flag_de:", inline=False)
-    await ctx.send(embed=embedVar)
-    await ctx.send(str(data))
-
+async def bal(ctx, user: discord.User = None):
+    try:
+        if user == None:
+            user = ctx.author
+        else:
+            user = user
+        try:
+            duid, guid, doc, cbal, cdc = sql_search("DUSERS", user.id)
+            guid, cnam, csym = sql_search("DGUILDS", guid)
+            if guid == ctx.guild.id:
+                embedVar = discord.Embed(
+                    title="{}'s balance".format(user.name), description=str("Use `cc daily` to get coins!"), color = colors.gold
+                    )
+                embedVar.set_thumbnail(url=user.avatar_url)
+                embedVar.add_field(name="{} Balance: ".format(csym), value="**"+str(cbal)+"**", inline=False)
+                await ctx.send(embed=embedVar)
+            else:
+                await ctx.send("Your account is connected to a different server, to change it user `cc changeserver` or `cc cs`.")
+        except:
+            if user == None:
+                await ctx.send("Your account does not exist here :\ Use `cc addme` to create one.")
+            else:
+                await ctx.send("There is no account with this name here.")
+    except:
+        await ctx.send("There is no account with this name here.")
 
 @client.command()
 async def bet(ctx):
