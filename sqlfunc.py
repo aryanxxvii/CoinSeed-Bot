@@ -65,7 +65,7 @@ def sql_show_table(tablename): #returns a list of tuples
 def sql_user_cngserver(duid, newguid):
 
     global mycursor, mydb
-    mycursor.execute("UPDATE DUSERS SET GUID = {} WHERE DUID = {}".format(newguid, duid))
+    mycursor.execute("UPDATE DUSERS SET GUID = {}, CBAL = 0 WHERE DUID = {}".format(newguid, duid))
     mydb.commit()
 
 def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
