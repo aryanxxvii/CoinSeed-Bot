@@ -378,7 +378,7 @@ async def legacyprofile(ctx, user: discord.User = None): #ADD LOANS
                 embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
                 await ctx.send(embed=embedVar)
             else:
-                await ctx,send("You don't have an account in this server!")
+                await ctx.send("You don't have an account in this server!")
         except:
             await ctx.send("Your account does not exist! To create one, use `cc addme`")
 
