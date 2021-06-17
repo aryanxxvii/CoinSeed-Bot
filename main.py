@@ -269,10 +269,65 @@ async def tables(ctx, table):
         await ctx.send("`"+st_f+"`")
        
 
-    
+
 
 @client.command(aliases=["pr"])
-async def profile(ctx, user: discord.User = None): #ADD LOANS
+async def profile(ctx, user: discord.User = None):
+    if user == None:
+        user = ctx.author
+    else:
+        user = user
+    try:
+        user_data_all = sql_search("DUSERS", user.id)
+        duid, guid, doc, cbal, cdc = user_data_all
+        if guid == ctx.guild.id:
+            try:
+                guilddata = sql_search("DGUILDS", guid) 
+                guid, cnam, csym = guilddata
+                st_doc = doc.strftime("%d-%m-%Y")
+                dt_storedtime = cdc
+                nextdaily = dt_storedtime + timedelta(hours=24)
+                nowtime = datetime.now()
+                waittime = nextdaily - nowtime
+                
+                try:
+                    
+                    acttime = str(waittime).split(".")[0] #ERROR HERE
+                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                    acttime = str(waittime).split(".")[0]
+                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                    str_waittime_hour = dt_acttime.strftime("%H")
+                    str_waittime_min = dt_acttime.strftime("%M")         
+                
+                except:
+                    str_waittime_hour = "**00**"
+                    str_waittime_min = "**00**"  
+                
+                name = user.name
+                avatar_url = user.avatar_url
+                
+                
+                embedVar = discord.Embed(
+                title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
+                )
+                embedVar.set_thumbnail(url=avatar_url)
+                embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
+                embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
+            
+                await ctx.send(embed=embedVar)
+        
+            except:
+                await ctx.send("There is no account with this name in this server.")
+        else:
+            await ctx.send("There is no account with this name in this server.")
+
+    except:
+        await ctx.send("There is no account with this name in this server.")
+
+
+    
+@client.command()
+async def legacyprofile(ctx, user: discord.User = None): #ADD LOANS
     #CHECK IF USER EXISTS FIRST !!!
     if user == None:
         try:
@@ -377,7 +432,7 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
                     embedVar.set_thumbnail(url=avatar_url)
                     embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
                     embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-                
+                    
                     await ctx.send(embed=embedVar)
             
                 except:
