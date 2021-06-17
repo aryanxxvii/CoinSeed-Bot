@@ -99,15 +99,10 @@ async def server(ctx):
     guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
     gnam = ctx.guild.name
     icon_url = ctx.guild.icon_url
-    desc = ctx.guild.description
-    print(desc)
-    if desc == None or desc == "None":
-        desc == ""
-    else:
-        pass
+    
     
     embedVar = discord.Embed(
-    title="{}'s Info".format(gnam), description=desc, color = colors.purple
+    title="{}'s Info".format(gnam), description="", color = colors.purple
     )
     embedVar.set_thumbnail(url=icon_url)
     embedVar.add_field(name="Coin-Name", value=cnam, inline=False)
@@ -266,7 +261,12 @@ async def changeserverinfo(ctx):
                         await ctx.send("You did not respond.")
                         
                 except asyncio.TimeoutError:
-                    await ctx.send("You did not respond.")                  
+                   await ctx.send("You did not respond.")                  
+
+            else:
+                await ctx.send("You don't have an account in this server!")
+
+
         except:
             await ctx.send("You don't have an account in this server!")
     else:
@@ -368,7 +368,10 @@ async def profile(ctx, user: discord.User = None):
             except:
                 await ctx.send("There is no account with this name in this server.")
         else:
-            await ctx.send("There is no account with this name in this server.")
+            if user == ctx.author:
+                await ctx.send("You don't have an account in this server!")
+            else:
+                await ctx.send("There is no account with this name in this server.")
 
     except:
         await ctx.send("There is no account with this name in this server.")
