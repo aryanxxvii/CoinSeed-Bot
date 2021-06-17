@@ -7,7 +7,7 @@
 - [x] PROFILE
 - [x] DAILY
 - [ ] LOANS
-- [ ] CHANGE SERVER
+- [x] CHANGE SERVER
 - [ ] TIPS
 - [x] CHANGE SYMBOL/NAME
 - [x] Remove Symbols + names hardcoding in cc profile
