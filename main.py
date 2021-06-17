@@ -47,15 +47,6 @@ async def ping(ctx):
 
 
 
-@client.command()
-async def server(ctx):
-    await ctx.send(ctx.guild.name)
-    await ctx.send(ctx.guild.icon_url)
-    for member in ctx.guild.members:
-        await ctx.send(str(member.name) + " " + str(member.id) + " " + str(member.avatar_url))
-
-
-
 
 #-------------------------------------------------------------------------------
 
@@ -99,6 +90,34 @@ async def on_guild_join(guild):
         #ADD GUILD
         sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
             
+
+
+
+@client.command(aliases=["s"])
+async def server(ctx):
+    guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+    gnam = ctx.guild.name
+    icon_url = ctx.guild.icon_url
+    desc = ctx.guild.description
+    print(desc)
+    if desc == None or desc == "None":
+        desc == ""
+    else:
+        pass
+    
+    embedVar = discord.Embed(
+    title="{}'s Info".format(gnam), description=desc, color = colors.purple
+    )
+    embedVar.set_thumbnail(url=icon_url)
+    embedVar.add_field(name="Coin-Name", value=cnam, inline=False)
+    embedVar.add_field(name="Coin-Symbol", value=csym, inline=False)
+    
+    await ctx.send(embed=embedVar)
+
+
+
+
+
 
 
 # ACC CREATION
@@ -448,6 +467,8 @@ async def legacyprofile(ctx, user: discord.User = None): #ADD LOANS
 
         except:
             await ctx.send("There is no account with this name in this server.")
+
+
 
 @client.command(aliases=["rm"])
 async def removeme(ctx):
