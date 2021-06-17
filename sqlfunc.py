@@ -31,8 +31,13 @@ def sql_search(tablename, key):
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
     mycursor.execute("SELECT * FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
-    x = list(mycursor.fetchone())
-    return x
+    try:
+        x = list(mycursor.fetchone())
+        return x
+    except:
+        return None
+
+
 
 def sql_check_exist(tablename, key):
     global mycursor, mydb

@@ -66,8 +66,9 @@ async def server(ctx):
 # [x]DAILY
 # [ ]LOANS
 # [ ]CHANGE SERVER
-# [ ]CHANGE SYMBOL/NAME
+# [x]CHANGE SYMBOL/NAME
 # [ ]TIPS
+# [x]REMOVE HARDCODING
 
 #-------------------------------------------------------------------------------
 
@@ -148,13 +149,19 @@ async def addme(ctx, *, attr=None):
 
 
 
-@client.command()
+@client.command(aliases=["d"])
 async def daily(ctx):
     #CHECK TIME
     try:
         fetchdata = sql_search("DUSERS", ctx.author.id)
         duid, guid, doc, cbal, cdc = fetchdata
         if ctx.guild.id == guid:
+            guilddata = sql_search("DGUILDS", guid)
+
+            
+            guid, cnam, csym = guilddata
+
+            
             dt_storedtime = cdc
             nextdaily = dt_storedtime + timedelta(hours=24)
             nowtime = datetime.now()
@@ -162,11 +169,11 @@ async def daily(ctx):
                 amount = random.randrange(100, 600) 
                 sql_addbal(ctx.author.id, amount)
                 if amount in range(100, 250):
-                    await ctx.send("**+{}** :coin: have been added to your account.".format(amount))
+                    await ctx.send("**+{}** {} have been added to your account.".format(amount, csym))
                 elif amount in range(250, 450):
-                    await ctx.send("Nice! **+{}** :coin: have been added to your account!".format(amount))
+                    await ctx.send("Nice! **+{}** {} have been added to your account!".format(amount, csym))
                 elif amount in range(450, 600):
-                    await ctx.send("AWESOME! **+{}** :coin: have been added to your account!!".format(amount))
+                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, csym))
                 
                 st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
                 sql_update_date(ctx.author.id, st_now)
@@ -264,7 +271,7 @@ async def tables(ctx, table):
 
     
 
-@client.command()
+@client.command(aliases=["pr"])
 async def profile(ctx, user: discord.User = None): #ADD LOANS
     #CHECK IF USER EXISTS FIRST !!!
     if user == None:
@@ -272,15 +279,38 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
             user_data_all = sql_search("DUSERS", ctx.author.id)
             duid, guid, doc, cbal, cdc = user_data_all
             if guid == ctx.guild.id:
-                dt_storedtime = cdc
+                guilddata = sql_search("DGUILDS", guid)
+                guid, cnam, csym = guilddata
+
                 st_doc = doc.strftime("%d-%m-%Y")
+             
+                dt_storedtime = cdc
+                #print(dt_storedtime)
+                
                 nextdaily = dt_storedtime + timedelta(hours=24)
+                #print(nextdaily)
+                
                 nowtime = datetime.now()
+                #print(nowtime)
+                
                 waittime = nextdaily - nowtime
-                acttime = str(waittime).split(".")[0]
-                dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                str_waittime_hour = dt_acttime.strftime("%H")
-                str_waittime_min = dt_acttime.strftime("%M")
+                dt_waittime = str(waittime).split(", ")
+                if len(dt_waittime) == 2:
+                    waittime = dt_waittime[1]
+                    str_waittime_hour = "**00**"
+                    str_waittime_min = "**00**"
+                    
+                else:
+                    waittime = dt_waittime[0]
+                    acttime = str(waittime).split(".")[0] #ERROR HERE
+                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                    acttime = str(waittime).split(".")[0]
+                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                    str_waittime_hour = dt_acttime.strftime("%H")
+                    str_waittime_min = dt_acttime.strftime("%M")
+                            
+                
+
 
                 name = ctx.author.name
                 avatar_url = ctx.author.avatar_url
@@ -289,41 +319,138 @@ async def profile(ctx, user: discord.User = None): #ADD LOANS
                 title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
                 )
                 embedVar.set_thumbnail(url=avatar_url)
-                embedVar.add_field(name="Coin Balance :coin:: ", value=str(cbal), inline=False)
+                embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
                 embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
                 await ctx.send(embed=embedVar)
+            else:
+                await ctx,send("You don't have an account in this server!")
         except:
             await ctx.send("Your account does not exist! To create one, use `cc addme`")
 
     elif user != None:
-        user_data_all = sql_search("DUSERS", user.id)
-        duid, guid, doc, cbal, cdc = user_data_all
         try:
-            st_doc = doc.strftime("%d-%m-%Y")
-            dt_storedtime = cdc
-            nextdaily = dt_storedtime + timedelta(hours=24)
-            nowtime = datetime.now()
-            waittime = nextdaily - nowtime
-            acttime = str(waittime).split(".")[0]
-            dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-            str_waittime_hour = dt_acttime.strftime("%H")
-            str_waittime_min = dt_acttime.strftime("%M")
+            user_data_all = sql_search("DUSERS", user.id)
+            duid, guid, doc, cbal, cdc = user_data_all
+            if guid == ctx.guild.id:
+                try:
+                    guilddata = sql_search("DGUILDS", guid) 
+                    guid, cnam, csym = guilddata
+
+                
+                    st_doc = doc.strftime("%d-%m-%Y")
+                    
+                    dt_storedtime = cdc
+                    #print(dt_storedtime)
+                    
+                    nextdaily = dt_storedtime + timedelta(hours=24)
+                    #print(nextdaily)
+                    
+                    nowtime = datetime.now()
+                    #print(nowtime)
+                    
+                    waittime = nextdaily - nowtime
+                    dt_waittime = str(waittime).split(", ")
+                    if len(dt_waittime) == 2:
+                        waittime = dt_waittime[1]
+                        str_waittime_hour = "**00**"
+                        str_waittime_min = "**00**"
+                        
+                    else:
+                        waittime = dt_waittime[0]
+                        acttime = str(waittime).split(".")[0] #ERROR HERE
+                        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                        acttime = str(waittime).split(".")[0]
+                        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
+                        str_waittime_hour = dt_acttime.strftime("%H")
+                        str_waittime_min = dt_acttime.strftime("%M")
+                                
+                    
+                    
+                    
+                    name = user.name
+                    avatar_url = user.avatar_url
+                    
+                    
+                    embedVar = discord.Embed(
+                    title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
+                    )
+                    embedVar.set_thumbnail(url=avatar_url)
+                    embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
+                    embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
+                
+                    await ctx.send(embed=embedVar)
             
-            name = user.name
-            avatar_url = user.avatar_url
-            
-            
-            embedVar = discord.Embed(
-            title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
-            )
-            embedVar.set_thumbnail(url=avatar_url)
-            embedVar.add_field(name="Coin Balance :coin:: ", value=str(cbal), inline=False)
-            embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-        
-            await ctx.send(embed=embedVar)
-    
+                except:
+                    await ctx.send("There is no account with this name in this server.")
+            else:
+                await ctx.send("There is no account with this name in this server.")
+
         except:
             await ctx.send("There is no account with this name in this server.")
+
+@client.command(aliases=["rm"])
+async def removeme(ctx):
+    if sql_check_exist("DUSERS", ctx.author.id):
+        duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+
+        # CHECK IF ANY PENDING LOANS
+        
+        await ctx.send("Are you sure yoou want to delete your account? This action is permanent and you will **lose all your balance**. Type `confirm` if you want to proceed.")
+        try:
+            conf = await client.wait_for(
+                "message",
+                timeout=30,
+                check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                )
+            confcon = conf.content
+            if confcon.lower() in ["confirm", "confirm "]:
+                sql_delete("DUSERS", ctx.author.id)
+                await ctx.send("Your account has been deleted.")
+        except asyncio.TimeoutError:
+            await ctx.send("You did not respond.")
+    else:
+        await ctx.send("You don't have an account yet!")
+            
+
+
+@client.command(aliases=["cs"])
+async def changeserver(ctx):
+    if sql_check_exist("DUSERS", ctx.author.id):
+        duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+        if guid == ctx.guild.id:
+            await ctx.send("You have already registered your account here! You can only use this command in a different server.")
+        else:
+            await ctx.send("Are you sure you want to change your server?\n**YOU WILL LOSE ALL YOUR BALANCE!!**\nType `Y` or `y` to continue.")
+            try:
+                conf = await client.wait_for(
+                    "message",
+                    timeout=30,
+                    check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                    )
+                confcon = conf.content
+                if confcon in ["Y", "y"]:
+                    sql_user_cngserver(ctx.author.id, ctx.guild.id)
+                    await ctx.send("Your server has been changed.")
+
+            except asyncio.TimeoutError:
+                await ctx.send("You did not respond.")
+                
+    else:
+        await ctx.send("You do not have an account in this server. Use `cc addme` to create one!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # CHECK 

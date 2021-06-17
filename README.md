@@ -10,5 +10,5 @@
 - [ ] CHANGE SERVER
 - [ ] TIPS
 - [x] CHANGE SYMBOL/NAME
-- [ ] Remove Symbols + names hardcoding in cc profile
+- [x] Remove Symbols + names hardcoding in cc profile
 
