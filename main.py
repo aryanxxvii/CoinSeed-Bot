@@ -200,10 +200,8 @@ async def daily(ctx):
                 
             else:
                 waittime = nextdaily - nowtime
-                acttime = str(waittime).split(".")[0]
-                dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                str_waittime_hour = dt_acttime.strftime("%H")
-                str_waittime_min = dt_acttime.strftime("%M")
+                str_waittime_hour = str(waittime.seconds//3600)
+                str_waittime_min = str((waittime.seconds//60)%60)
                 await ctx.send("You have to wait another **{} hours {} minutes**".format(str_waittime_hour, str_waittime_min))
             
         else:
@@ -305,9 +303,6 @@ async def tip(ctx, user: discord.User = None, amount = None):
 
 
 
-
-
-
 @client.command(aliases=["pr"])
 async def profile(ctx, user: discord.User = None):
     if user == None:
@@ -322,19 +317,16 @@ async def profile(ctx, user: discord.User = None):
                 guilddata = sql_search("DGUILDS", guid) 
                 guid, cnam, csym = guilddata
                 st_doc = doc.strftime("%d-%m-%Y")
+                
                 dt_storedtime = cdc
                 nextdaily = dt_storedtime + timedelta(hours=24)
                 nowtime = datetime.now()
-                waittime = nextdaily - nowtime
                 
                 try:
-                    
-                    acttime = str(waittime).split(".")[0] #ERROR HERE
-                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                    acttime = str(waittime).split(".")[0]
-                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                    str_waittime_hour = dt_acttime.strftime("%H")
-                    str_waittime_min = dt_acttime.strftime("%M")         
+                    assert nextdaily > nowtime
+                    waittime = nextdaily - nowtime
+                    str_waittime_hour = str(waittime.seconds//3600)
+                    str_waittime_min = str((waittime.seconds//60)%60)
                 
                 except:
                     str_waittime_hour = "**00**"
@@ -356,135 +348,10 @@ async def profile(ctx, user: discord.User = None):
             except:
                 await ctx.send("There is no account with this name in this server.")
         else:
-            if user == ctx.author:
-                await ctx.send("You have already have an account on a different server! To change your server, type `cc changeserver` or `cc cs`")
-            else:
-                await ctx.send("There is no account with this name in this server.")
+            await ctx.send("There is no account with this name in this server.")
 
     except:
-        if user == ctx.author:
-            await ctx.send("Your account does not exist! To create one, use `cc addme`")
-        else:
-            await ctx.send("There is no account with this name in this server.")
-
-
-    
-@client.command()
-async def legacyprofile(ctx, user: discord.User = None): #ADD LOANS
-    #CHECK IF USER EXISTS FIRST !!!
-    if user == None:
-        try:
-            user_data_all = sql_search("DUSERS", ctx.author.id)
-            duid, guid, doc, cbal, cdc = user_data_all
-            if guid == ctx.guild.id:
-                guilddata = sql_search("DGUILDS", guid)
-                guid, cnam, csym = guilddata
-
-                st_doc = doc.strftime("%d-%m-%Y")
-             
-                dt_storedtime = cdc
-                #print(dt_storedtime)
-                
-                nextdaily = dt_storedtime + timedelta(hours=24)
-                #print(nextdaily)
-                
-                nowtime = datetime.now()
-                #print(nowtime)
-                
-                waittime = nextdaily - nowtime
-                dt_waittime = str(waittime).split(", ")
-                if len(dt_waittime) == 2:
-                    waittime = dt_waittime[1]
-                    str_waittime_hour = "**00**"
-                    str_waittime_min = "**00**"
-                    
-                else:
-                    waittime = dt_waittime[0]
-                    acttime = str(waittime).split(".")[0] #ERROR HERE
-                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                    acttime = str(waittime).split(".")[0]
-                    dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                    str_waittime_hour = dt_acttime.strftime("%H")
-                    str_waittime_min = dt_acttime.strftime("%M")
-                            
-                
-
-
-                name = ctx.author.name
-                avatar_url = ctx.author.avatar_url
-                
-                embedVar = discord.Embed(
-                title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
-                )
-                embedVar.set_thumbnail(url=avatar_url)
-                embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
-                embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-                await ctx.send(embed=embedVar)
-            else:
-                await ctx,send("You don't have an account in this server!")
-        except:
-            await ctx.send("Your account does not exist! To create one, use `cc addme`")
-
-    elif user != None:
-        try:
-            user_data_all = sql_search("DUSERS", user.id)
-            duid, guid, doc, cbal, cdc = user_data_all
-            if guid == ctx.guild.id:
-                try:
-                    guilddata = sql_search("DGUILDS", guid) 
-                    guid, cnam, csym = guilddata
-
-                
-                    st_doc = doc.strftime("%d-%m-%Y")
-                    
-                    dt_storedtime = cdc
-                    #print(dt_storedtime)
-                    
-                    nextdaily = dt_storedtime + timedelta(hours=24)
-                    #print(nextdaily)
-                    
-                    nowtime = datetime.now()
-                    #print(nowtime)
-                    
-                    waittime = nextdaily - nowtime
-                    dt_waittime = str(waittime).split(", ")
-                    if len(dt_waittime) == 2:
-                        waittime = dt_waittime[1]
-                        str_waittime_hour = "**00**"
-                        str_waittime_min = "**00**"
-                        
-                    else:
-                        waittime = dt_waittime[0]
-                        acttime = str(waittime).split(".")[0] #ERROR HERE
-                        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                        acttime = str(waittime).split(".")[0]
-                        dt_acttime = datetime.strptime(acttime, "%H:%M:%S")
-                        str_waittime_hour = dt_acttime.strftime("%H")
-                        str_waittime_min = dt_acttime.strftime("%M")
-                                
-                    
-                    
-                    
-                    name = user.name
-                    avatar_url = user.avatar_url
-                    
-                    
-                    embedVar = discord.Embed(
-                    title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
-                    )
-                    embedVar.set_thumbnail(url=avatar_url)
-                    embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
-                    embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-                    
-                    await ctx.send(embed=embedVar)
-            
-                except:
-                    await ctx.send("There is no account with this name in this server.")
-            else:
-                await ctx.send("There is no account with this name in this server.")
-
-        except:
-            await ctx.send("There is no account with this name in this server.")
+        await ctx.send("There is no account with this name in this server.")
 
 
 
