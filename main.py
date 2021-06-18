@@ -385,7 +385,7 @@ async def removeme(ctx):
 
         # CHECK IF ANY PENDING LOANS
         
-        await ctx.send("Are you sure yoou want to delete your account? This action is permanent and you will **lose all your balance**. Type `confirm` if you want to proceed.")
+        await ctx.send("Are you sure you want to delete your account? This action is permanent and you will **lose all your balance**. Type `confirm` if you want to proceed.")
         try:
             conf = await client.wait_for(
                 "message",
