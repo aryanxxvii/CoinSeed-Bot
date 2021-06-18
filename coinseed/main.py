@@ -4,11 +4,6 @@ import asyncio
 import random
 from datetime import datetime, timedelta
 import emoji
-try:
-    from sqlfunc import *
-except InterfaceError:
-    print("Server Error or Error in MySQL Code")
-
 
 
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
@@ -46,13 +41,20 @@ class colors:
 @client.event
 async def on_ready():
     print("Bot is ready")
-    try:
-        pass
-        #await client.change_presence(activity=Game('paaji help'))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="cc help"))
+
+
+
+
+
+try:
+    from sqlfunc import *
+except:
+    print("Server Error or Error in MySQL Code")
     
-    except:
-        pass
-        #await client.change_presence(activity=discord.Game('paaji help'))
+
+
+
 
 
 @client.command()
@@ -60,37 +62,47 @@ async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
 
-coms = {"addme":"", "profile":"", "daily":"", "balance":"", "server":"", "tip":"", "loan":"", "leaderboard":"", "server":"", "changeserverinfo":"", "changeserver":"", "removeme":""}
+coms = {"addme":"`Creates your CoinSeed Account`", "profile/pr":"`Displays your or tagged user's CoinSeed profile`", "daily/d":"`Collect daily coins!`", "balance/bal":"`Check your balance`", "server/s":"`Displays your server's CoinSeed profile`", "tip/give/t":"`Give your coins to someone!`\n`cc tip @EpicPerson 100`", "leaderboard/lb":"`View this server's leaderboard!`", "cngserverinfo/csi":"`Change your server's info (MOD ONLY)`", "changeserver/cs":"`Change the server linked to your account`", "removeme/rm":"`Permanently deletes your account :(`"}
 
 
-@client.command(ctx, comname = None):
-    if conname = None:
-        #GENERAL HELP
+@client.command()
+async def help(ctx, comname = None):
+    if comname == None:
         embedVar = discord.Embed(
-        title="{}'s balance".format(user.name), description=str("Use `cc daily` to get coins!"), color = colors.gold
+        title="CoinSeed Help", description="General Help", color = colors.gold
         )
-        embedVar.set_thumbnail(url=user.avatar_url)
-        embedVar.add_field(name="{} Balance: ".format(csym), value="**"+str(cbal)+"**", inline=False)
+        embedVar.set_thumbnail(url=client.user.avatar_url)
+        for com in coms:
+            comhelp = coms[com]
+            embedVar.add_field(name="{}".format(com), value="{}".format(comhelp), inline=True)
+
         await ctx.send(embed=embedVar)
-
-
+    elif comname in coms:
+        embedVar = discord.Embed(
+        title="{} Help".format(comname), description="{}".format(coms[comname]), color = colors.gold
+        )
+        embedVar.set_thumbnail(url=client.user.avatar_url)
+        await ctx.send(embed=embedVar)
+    else:
+        await ctx.send("No such command exists! Use `cc help` to see all commands.")
+        
 
 #-------------------------------------------------------------------------------
 
 # [x]PERSONAL ACC CREATION
 # [x]GUILD ACC CREATION
-# [ ]BAL CHECK
+# [x]BAL CHECK
 # [x]PROFILE
 # [x]SERVER PRoFILE
 # [x]DAILY
 # [ ]LOANS
 # [x]CHANGE SERVER
 # [x]CHANGE SYMBOL/NAME
-# [ ]TIPS
+# [x]TIPS
 # [x]REMOVE HARDCODING
-# [ ]MAKE HELP
-# [ ]BUMP COINS
-# [ ]LEADERBOARD
+# [x]MAKE HELP
+# [x]BUMP COINS
+# [x]LEADERBOARD
 # [ ]TOTAL COINS IN SERVER + %COINS IN USER PROFILE
 
 #-------------------------------------------------------------------------------
@@ -281,7 +293,7 @@ async def daily(ctx):
 
 
 @client.command(aliases=["csi"])
-async def changeserverinfo(ctx):
+async def cngserverinfo(ctx):
     
     if ctx.author.guild_permissions.manage_guild:
         
