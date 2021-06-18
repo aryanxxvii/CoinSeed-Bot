@@ -76,7 +76,7 @@ async def ping(ctx):
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
 
-def check_user_guild_useringuild_exists(userid = None):
+def check_user_guild_useringuild_exists(ctx, userid = None):
     # returns bool values for existence of user, guild and user in guild
     if userid == None:
         userid = ctx.author.id
