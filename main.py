@@ -273,20 +273,6 @@ async def changeserverinfo(ctx):
             await ctx.send("You don't have an account in this server!")
     else:
         await ctx.send("Sorry! You don't have the permissions!")
-                    
-
-
-
-@client.command()
-async def ce(ctx):
-    await ctx.send("Alright, what do you want your Server's **new** Coin-Symbol to be?")
-    sym_inp = await client.wait_for(
-        "message",
-        timeout=30,
-        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-        )
-    print(sym_inp.content)
-    
 
     
 
