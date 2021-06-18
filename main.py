@@ -115,7 +115,7 @@ async def on_guild_join(guild):
     #ELSE
     elif not guildexists:
         #ADD GUILD
-        sql_add("DGUILDS", guild.id, ["SeedCoin", ":coin:"])
+        sql_add("DGUILDS", guild.id, ["SeedCoin", "coin"])
             
 
 
@@ -203,11 +203,11 @@ async def daily(ctx):
                 amount = random.randrange(100, 600) 
                 sql_addbal(ctx.author.id, amount)
                 if amount in range(100, 250):
-                    await ctx.send("**+{}** {} have been added to your account.".format(amount, csym))
+                    await ctx.send("**+{}** {} have been added to your account.".format(amount, emoji.emojize(csym)))
                 elif amount in range(250, 450):
-                    await ctx.send("Nice! **+{}** {} have been added to your account!".format(amount, csym))
+                    await ctx.send("Nice! **+{}** {} have been added to your account!".format(amount, emoji.emojize(csym)))
                 elif amount in range(450, 600):
-                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, csym))
+                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym)))
                 
                 st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
                 sql_update_date(ctx.author.id, st_now)
@@ -243,7 +243,7 @@ async def changeserverinfo(ctx):
             if user_in_guild:
                 duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
                 guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
-                await ctx.send("Current Coin-Name: {}\nCurrent Coin-Symbol: {}".format(cnam, csym))
+                await ctx.send("Current Coin-Name: {}\nCurrent Coin-Symbol: {}".format(cnam, emoji.emojize(csym)))
                 await ctx.send("What do you want your Server's **new** Coin-Name to be?")
                 try:
                     coin_inp = await client.wait_for(
@@ -313,7 +313,7 @@ async def tip(ctx, user: discord.User = None, amount = None):
             if guid == guidr:
                 if cbal >= int(amount):
                     guid, cnam, csym = sql_search("DGUILDS", guid)
-                    await ctx.send("Are you sure you want to give {} {} {}? Type `confirm`.".format(user.mention, amount, csym))
+                    await ctx.send("Are you sure you want to give {} {} {}? Type `confirm`.".format(user.mention, amount, emoji.emojize(csym)))
                     try:
                         conf = await client.wait_for(
                             "message",
@@ -324,7 +324,7 @@ async def tip(ctx, user: discord.User = None, amount = None):
                         if confcon.lower() in ["confirm", "confirm "]:
                             sql_addbal(user.id, amount)
                             sql_subbal(ctx.author.id, amount)
-                            await ctx.send("{} {} have been transfered to {}'s account!".format(amount, csym, user.mention))
+                            await ctx.send("{} {} have been transfered to {}'s account!".format(amount, emoji.emojize(csym), user.mention))
                         else:
                             await ctx.send("Procedure cancelled.")
                     except asyncio.TimeoutError:
@@ -382,7 +382,7 @@ async def profile(ctx, user: discord.User = None):
             title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
             )
             embedVar.set_thumbnail(url=avatar_url)
-            embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
+            embedVar.add_field(name="Coin Balance {}: ".format(emoji.emojize(csym)), value=str(cbal), inline=False)
             embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
             
             await ctx.send(embed=embedVar)
