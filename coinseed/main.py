@@ -15,6 +15,8 @@ bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
 client = commands.Bot(command_prefix=bot_prefix, intents=intents)
 
+client.remove_command("help")
+
 class colors:
     default = 0
     teal = 0x1abc9c
@@ -58,6 +60,19 @@ async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
 
+coms = {"addme":"", "profile":"", "daily":"", "balance":"", "server":"", "tip":"", "loan":"", "leaderboard":"", "server":"", "changeserverinfo":"", "changeserver":"", "removeme":""}
+
+
+@client.command(ctx, comname = None):
+    if conname = None:
+        #GENERAL HELP
+        embedVar = discord.Embed(
+        title="{}'s balance".format(user.name), description=str("Use `cc daily` to get coins!"), color = colors.gold
+        )
+        embedVar.set_thumbnail(url=user.avatar_url)
+        embedVar.add_field(name="{} Balance: ".format(csym), value="**"+str(cbal)+"**", inline=False)
+        await ctx.send(embed=embedVar)
+
 
 
 #-------------------------------------------------------------------------------
@@ -76,6 +91,7 @@ async def ping(ctx):
 # [ ]MAKE HELP
 # [ ]BUMP COINS
 # [ ]LEADERBOARD
+# [ ]TOTAL COINS IN SERVER + %COINS IN USER PROFILE
 
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
@@ -325,16 +341,16 @@ async def changeserverinfo(ctx):
 
     
 
-@client.command()
-async def tables(ctx, table):
-    f_all = sql_show_table(table)
-    for f_one in f_all:
-        st_f_one = []
-        for c in f_one:
-            st_f_one.append(str(c))
-        st_f = " | ".join(st_f_one)
-        await ctx.send("`"+st_f+"`")
-       
+##@client.command()
+##async def tables(ctx, table):
+##    f_all = sql_show_table(table)
+##    for f_one in f_all:
+##        st_f_one = []
+##        for c in f_one:
+##            st_f_one.append(str(c))
+##        st_f = " | ".join(st_f_one)
+##        await ctx.send("`"+st_f+"`")
+##       
 
 
 @client.command(aliases=["give", "t"])
@@ -519,8 +535,8 @@ async def changeserver(ctx):
 
 # CHECK 
 
-@client.command()
-async def bal(ctx, user: discord.User = None):
+@client.command(aliases=["bal"])
+async def balance(ctx, user: discord.User = None):
     try:
         if user == None:
             user = ctx.author
