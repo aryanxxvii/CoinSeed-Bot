@@ -3,7 +3,7 @@
 ## TODO
 - [x] PERSONAL ACC CREATION
 - [x] GUILD ACC CREATION
-- [ ] BAL CHECK [Very Easy to make]
+- [x] BAL CHECK
 - [x] PROFILE
 - [x] DAILY
 - [ ] LOANS
@@ -13,5 +13,5 @@
 - [x] Remove Symbols + names hardcoding in cc profile
 - [x] SERVER PROFILE
 - [ ] MAKE HELP
-- [ ] BUMP COINS
+- [x] BUMP COINS
 
