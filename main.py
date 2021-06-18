@@ -393,7 +393,7 @@ async def removeme(ctx):
                 check=lambda message: message.author == ctx.author and message.channel == ctx.channel
                 )
             confcon = conf.content
-            if confcon.lower() in ["confirm", "confirm "]:
+            if confcon.lower().strip() in ["confirm"]:
                 sql_delete("DUSERS", ctx.author.id)
                 await ctx.send("Your account has been deleted.")
         except asyncio.TimeoutError:
