@@ -12,4 +12,6 @@
 - [x] CHANGE SYMBOL/NAME
 - [x] Remove Symbols + names hardcoding in cc profile
 - [x] SERVER PROFILE
+- [ ] MAKE HELP
+- [ ] BUMP COINS
 
