@@ -1,15 +1,15 @@
 import discord
 from discord.ext import commands
 import asyncio
-
 import random
 from datetime import datetime, timedelta
 import emoji
 try:
     from sqlfunc import *
-except:
-    print("Server Error")
-    
+except InterfaceError:
+    print("Server Error or Error in MySQL Code")
+
+
 
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
@@ -45,12 +45,13 @@ class colors:
 async def on_ready():
     print("Bot is ready")
     try:
-        
-        await client.change_presence(activity=Game('paaji help'))
+        pass
+        #await client.change_presence(activity=Game('paaji help'))
     
     except:
-    
-        await client.change_presence(activity=discord.Game('paaji help'))
+        pass
+        #await client.change_presence(activity=discord.Game('paaji help'))
+
 
 @client.command()
 async def ping(ctx):
@@ -151,30 +152,29 @@ async def server(ctx):
 @client.event
 async def on_message(message):
     if message.author.id == 302050872383242240: #Disboard's ID
-        embeds = message.embeds:
-            emdict = embed.to_dict()
-            if "Bump done" in emdict["description"]:
-                em_l = emdict["description"].split(" ")
-                tag = em_l[0][:-1]
-                if "!" in tag:
-                    userid = int(tag[3:-1])
-                else:
-                    userid = int(tag[2:-1])
-                try:
-                    duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
-                    guid, cnam, csym = sql_search("DGUILDS", guid)
-                    if guid = message.guild.id:
-                        amount = random.randrange(100, 201):
-                        sql_addbal(userid, amount)
-                        sql_search("DGUILDS", message.guild.id)
-                        await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
-                        
-                    else:
-                        await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
-                except:
-                    await ctx.send("You don't have an account yet! Create one with `cc addme`!")
+        embeds = message.embeds
+        emdict = embed.to_dict()
+        if "Bump done" in emdict["description"]:
+            em_l = emdict["description"].split(" ")
+            tag = em_l[0][:-1]
+            if "!" in tag:
+                userid = int(tag[3:-1])
+            else:
+                userid = int(tag[2:-1])
+            try:
+                duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
+                guid, cnam, csym = sql_search("DGUILDS", guid)
+                if guid == message.guild.id:
+                    amount = random.randrange(100, 201)
+                    sql_addbal(userid, amount)
+                    sql_search("DGUILDS", message.guild.id)
+                    await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
                     
-            
+                else:
+                    await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
+            except:
+                await ctx.send("You don't have an account yet! Create one with `cc addme`!")
+    await client.process_commands(message)        
 
 # ACC CREATION
 @client.command()
@@ -431,6 +431,23 @@ async def profile(ctx, user: discord.User = None):
             await ctx.send("You don't have an account yet.")
         elif cond == 'they':
             await ctx.send("There is no account with this name.")
+
+
+
+
+@client.command(aliases=["lb"])
+async def leaderboard(ctx):
+    ulist, csym, cnam = sql_server_topusers(ctx.guild.id)
+    ecsym = emoji.emojize(csym)
+    embedVar = discord.Embed(
+    title="{}'s Leaderboard".format(ctx.guild.name), description="Top 10 Accounts", color = colors.red
+    )
+    embedVar.set_thumbnail(url=ctx.guild.icon_url)
+    for r in range(len(ulist)):
+        duid, cbal = ulist[r]
+        embedVar.add_field(name="{}. {}: ".format(r+1, client.get_user(duid).name), value = "**{} {}**".format(cbal, emoji.emojize(csym)), inline=False)
+    embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
+    await ctx.send(embed=embedVar)
 
 
 

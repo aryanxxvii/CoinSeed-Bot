@@ -65,11 +65,11 @@ def sql_show_table(tablename): #returns a list of tuples
 def sql_server_topusers(guid): #list the players in the server, csym
 
     global mycursor, mydb
-    mycursor.execute("SELECT CSYM FROM DGUIDS WHERE GUID = {}".format(guid))
-    csym = mycursor.fetchone()[0]
-    mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL")
-    user_list = mycursor.fetchall()
-    return user_list, csym
+    mycursor.execute("SELECT CSYM, CNAM FROM DGUILDS WHERE GUID = {}".format(int(guid)))
+    csym, cnam = mycursor.fetchone()
+    mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL".format(int(guid)))
+    user_list = mycursor.fetchall()[:10]
+    return user_list, csym, cnam
 
 def sql_user_cngserver(duid, newguid):
 
