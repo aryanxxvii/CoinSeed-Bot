@@ -72,6 +72,8 @@ async def ping(ctx):
 # [x]CHANGE SYMBOL/NAME
 # [ ]TIPS
 # [x]REMOVE HARDCODING
+# [ ]MAKE HELP
+# [ ]BUMP COINS
 
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
@@ -320,7 +322,7 @@ async def tip(ctx, user: discord.User = None, amount = None):
             if guid == guidr:
                 if cbal >= int(amount):
                     guid, cnam, csym = sql_search("DGUILDS", guid)
-                    await ctx.send("Are you sure you want to give {} {} {}? Type `confirm`.".format(user.mention, amount, emoji.emojize(csym)))
+                    await ctx.send("Are you sure you want to give {} **{}** {}? Type `confirm`.".format(user.mention, amount, emoji.emojize(csym)))
                     try:
                         conf = await client.wait_for(
                             "message",
@@ -331,7 +333,7 @@ async def tip(ctx, user: discord.User = None, amount = None):
                         if confcon.lower() in ["confirm", "confirm "]:
                             sql_addbal(user.id, amount)
                             sql_subbal(ctx.author.id, amount)
-                            await ctx.send("{} {} have been transfered to {}'s account!".format(amount, emoji.emojize(csym), user.mention))
+                            await ctx.send("**{}** {} have been transfered to {}'s account!".format(amount, emoji.emojize(csym), user.mention))
                         else:
                             await ctx.send("Procedure cancelled.")
                     except asyncio.TimeoutError:
@@ -437,7 +439,6 @@ async def removeme(ctx):
 
 @client.command(aliases=["cs"])
 async def changeserver(ctx):
-
     user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
 
     if user_exists:
@@ -463,6 +464,30 @@ async def changeserver(ctx):
                 
     else:
         await ctx.send("You do not have an account in this server. Use `cc addme` to create one!")
+
+
+
+def checkbump(ctx):
+    if 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # CHECK 
