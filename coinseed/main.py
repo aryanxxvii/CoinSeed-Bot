@@ -44,6 +44,13 @@ class colors:
 @client.event
 async def on_ready():
     print("Bot is ready")
+    try:
+        
+        await client.change_presence(activity=Game('paaji help'))
+    
+    except:
+    
+        await client.change_presence(activity=discord.Game('paaji help'))
 
 @client.command()
 async def ping(ctx):
