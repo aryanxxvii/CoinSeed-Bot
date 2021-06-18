@@ -74,6 +74,7 @@ async def ping(ctx):
 # [x]REMOVE HARDCODING
 # [ ]MAKE HELP
 # [ ]BUMP COINS
+# [ ]LEADERBOARD
 
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
@@ -103,7 +104,7 @@ def check_user_guild_useringuild_exists(ctx, userid = None):
 @client.event
 async def on_ready():
     print("Bot is ready")
-    
+
 
 
 # AUTO GUILD ACC CREATION
@@ -147,10 +148,33 @@ async def server(ctx):
     await ctx.send(embed=embedVar)
 
 
-
-
-
-
+@client.event
+async def on_message(message):
+    if message.author.id == 302050872383242240: #Disboard's ID
+        embeds = message.embeds:
+            emdict = embed.to_dict()
+            if "Bump done" in emdict["description"]:
+                em_l = emdict["description"].split(" ")
+                tag = em_l[0][:-1]
+                if "!" in tag:
+                    userid = int(tag[3:-1])
+                else:
+                    userid = int(tag[2:-1])
+                try:
+                    duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
+                    guid, cnam, csym = sql_search("DGUILDS", guid)
+                    if guid = message.guild.id:
+                        amount = random.randrange(100, 201):
+                        sql_addbal(userid, amount)
+                        sql_search("DGUILDS", message.guild.id)
+                        await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
+                        
+                    else:
+                        await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
+                except:
+                    await ctx.send("You don't have an account yet! Create one with `cc addme`!")
+                    
+            
 
 # ACC CREATION
 @client.command()
@@ -467,25 +491,6 @@ async def changeserver(ctx):
 
 
 
-def checkbump(ctx):
-    if 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -519,59 +524,7 @@ async def bal(ctx, user: discord.User = None):
     except:
         await ctx.send("There is no account with this name here.")
 
-@client.command()
-async def bet(ctx):
-    await ctx.send("Today's Match: A vs B\nWhich team do you want to bet on?")
-    try:
-        team = await client.wait_for(
-            "message",
-            timeout=30,
-            check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-            )
-        teamcon = team.content
-        if teamcon.upper() in ["A", "B", "TIE"]:
-            try:
-                await ctx.send("What's your score prediction? [3 - 2]")
-                score = await client.wait_for(
-                    "message",
-                    timeout=30,
-                    check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-                    )
-                scorecon = score.content
-                lscore = scorecon.split("-")
-                ascore = int(lscore[0])
-                bscore = int(lscore[1])
-                try:
-                    await ctx.send("Alright, how much do you want to bet? (in UU)")  #dont hardcore symbol
-                    betamt = await client.wait_for(
-                        "message",
-                        timeout=30,
-                        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-                        ) #check is balance is there
-                    betamtcon = betamt.content
-                    betinpup = betamtcon.upper()
-                    betinplist = betinpup.split("UU")
-                    intbetamt = int(betinplist[0])
-                    await ctx.send(f"`Your Bet:{str(teamcon).capitalize()} | {str(ascore)} - {str(bscore)} | {str(intbetamt)} UU`")
-                    
-                except TypeError:
-                    await ctx.send("You gave wrong input \:(")
 
-                    
-                    
-                    
-                    
-            except TypeError:
-                await ctx.send("You gave wrong input \:(")
-
-                
-                
-                        
-                
-            
-    except asyncio.TimeoutError:
-            await ctx.send("You did not respond.")
-    
 
 
         
