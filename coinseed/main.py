@@ -337,7 +337,7 @@ async def tables(ctx, table):
        
 
 
-@client.command(aliases=["t"])
+@client.command(aliases=["give", "t"])
 async def tip(ctx, user: discord.User = None, amount = None):
     try:
         if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id): #CHECK GIVER and RECIEVER
@@ -438,14 +438,19 @@ async def profile(ctx, user: discord.User = None):
 @client.command(aliases=["lb"])
 async def leaderboard(ctx):
     ulist, csym, cnam = sql_server_topusers(ctx.guild.id)
+    ulist = ulist[::-1]
     ecsym = emoji.emojize(csym)
-    embedVar = discord.Embed(
-    title="{}'s Leaderboard".format(ctx.guild.name), description="Top 10 Accounts", color = colors.red
-    )
-    embedVar.set_thumbnail(url=ctx.guild.icon_url)
+    desc = ""
     for r in range(len(ulist)):
         duid, cbal = ulist[r]
-        embedVar.add_field(name="{}. {}: ".format(r+1, client.get_user(duid).name), value = "**{} {}**".format(cbal, emoji.emojize(csym)), inline=False)
+        desc = desc + "**{}. {}: {} {}**\n".format(r+1, client.get_user(duid).name, cbal, emoji.emojize(csym))
+    embedVar = discord.Embed(
+    title="{}'s Leaderboard".format(ctx.guild.name), description=desc, color = colors.red
+    )
+    embedVar.set_thumbnail(url=ctx.guild.icon_url)
+##    for r in range(len(ulist)):
+##        duid, cbal = ulist[r]
+##        embedVar.add_field(name="{}. {}: ".format(r+1, client.get_user(duid).name), value = "**{} {}**".format(cbal, emoji.emojize(csym)), inline=False)
     embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
     await ctx.send(embed=embedVar)
 
