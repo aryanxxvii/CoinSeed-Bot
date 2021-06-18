@@ -428,6 +428,24 @@ async def changeserver(ctx):
     else:
         await ctx.send("You do not have an account in this server. Use `cc addme` to create one!")
 
+def check_user_guild_useringuild_exists(ctx, user: discord.User = None):
+    # returns bool values for existence of user, guild and user in guild
+    if user == None:
+        user = ctx.author
+    else:
+        user = user
+    guild = ctx.guild
+
+    user_exists = sql_check_exist("DUSERS", user.id)
+    guild_exists = sql_check_exist("DGUILDS", guild.id)
+    
+    [duid, guid] = sql_search("DUSERS", user.id)[0:2]
+    if guid == guild.id:
+        user_exists_in_guild = True
+    else:
+        user_exists_in_guild = False
+    
+    return user_exists, guild_exists, user_exists_in_guild
 
 
 # CHECK 
