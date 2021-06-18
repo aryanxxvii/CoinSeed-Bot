@@ -69,7 +69,7 @@ async def ping(ctx):
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
 
-def check_user_guild_useringuild_exists(ctx, userid = None):
+def check_user_guild_useringuild_exists(userid = None):
     # returns bool values for existence of user, guild and user in guild
     if userid == None:
         userid = ctx.author.id
@@ -203,11 +203,11 @@ async def daily(ctx):
                 amount = random.randrange(100, 600) 
                 sql_addbal(ctx.author.id, amount)
                 if amount in range(100, 250):
-                    await ctx.send("**+{}** {} have been added to your account.".format(amount, emoji.emojize(csym)))
+                    await ctx.send("**+{}** {} {} have been added to your account.".format(amount, emoji.emojize(csym), cnam))
                 elif amount in range(250, 450):
-                    await ctx.send("Nice! **+{}** {} have been added to your account!".format(amount, emoji.emojize(csym)))
+                    await ctx.send("Nice! **+{}** {} {} have been added to your account!".format(amount, emoji.emojize(csym), cnam))
                 elif amount in range(450, 600):
-                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym)))
+                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym), cnam))
                 
                 st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
                 sql_update_date(ctx.author.id, st_now)
