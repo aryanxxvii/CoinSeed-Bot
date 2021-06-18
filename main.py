@@ -97,6 +97,7 @@ async def on_guild_join(guild):
 @client.command(aliases=["s"])
 async def server(ctx):
     guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+    ecsym = emoji.emojize(csym)
     gnam = ctx.guild.name
     icon_url = ctx.guild.icon_url
     
@@ -106,7 +107,7 @@ async def server(ctx):
     )
     embedVar.set_thumbnail(url=icon_url)
     embedVar.add_field(name="Coin-Name", value=cnam, inline=False)
-    embedVar.add_field(name="Coin-Symbol", value=csym, inline=False)
+    embedVar.add_field(name="Coin-Symbol", value=ecsym, inline=False)
     
     await ctx.send(embed=embedVar)
 
@@ -245,10 +246,11 @@ async def changeserverinfo(ctx):
                             st_coinsym = coinsym
                             print("2")
                             print(st_coinsym)
-                            
+ 
                         sql_guild_cngcoin(guid, coinname, st_coinsym)
 
                         guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+                        ecsym = emoji.emojize(csym)
                         servname = ctx.guild.name
                         icon_url = ctx.guild.icon_url
                        
@@ -258,7 +260,7 @@ async def changeserverinfo(ctx):
                         )
                         embedVar.set_thumbnail(url=icon_url)
                         embedVar.add_field(name="New Coin-Name", value=str(cnam), inline=False)
-                        embedVar.add_field(name="New Coin-Symbol", value=csym, inline=False)
+                        embedVar.add_field(name="New Coin-Symbol", value=ecsym, inline=False)
                         await ctx.send(embed=embedVar)
                         
                     except asyncio.TimeoutError:
