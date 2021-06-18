@@ -67,7 +67,29 @@ async def ping(ctx):
 # [x]REMOVE HARDCODING
 
 #-------------------------------------------------------------------------------
+# FUNCTIONS TO REDUCE REPETITION OF CODE
 
+def check_user_guild_useringuild_exists(ctx, userid = None):
+    # returns bool values for existence of user, guild and user in guild
+    if userid == None:
+        userid = ctx.author.id
+    guild = ctx.guild
+
+    user_exists = sql_check_exist("DUSERS", userid)
+    guild_exists = sql_check_exist("DGUILDS", guild.id)
+    
+    if user_exists and guild_exists:
+        [duid, guid] = sql_search("DUSERS", userid)[0:2]
+        if guid == guild.id:
+            user_exists_in_guild = True
+        else:
+            user_exists_in_guild = False
+    else:
+        user_exists_in_guild = False
+    
+    return user_exists, guild_exists, user_exists_in_guild
+
+#-------------------------------------------------------------------------------
 
 @client.event
 async def on_ready():
@@ -125,42 +147,36 @@ async def server(ctx):
 @client.command()
 async def addme(ctx, *, attr=None):
     if attr == None:
+        user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
         #IF MESSAGE GUILD IN DGUILDS
-            userexists = sql_check_exist("DUSERS", ctx.author.id)
-            if userexists:
-                allcheckwhich = sql_search("DUSERS", ctx.author.id)
-                #FIND USER GUILD IN DUSERS
-                try:
-                    userguild = allcheckwhich[0][1]
-                except:
-                    userguild = allcheckwhich[1]
-                if userguild == ctx.guild.id:
-                    await ctx.send('You have already registered your account in this server.')
-                else:
-                    await ctx.send("You have already registered in another server. To change your server type `cc changeserver`.")
+        if user_exists:
+            if user_in_guild:
+                await ctx.send('You have already registered your account in this server.')
+            else:
+                await ctx.send("You have already registered in another server. To change your server type `cc changeserver`.")
 
-            elif not userexists:
-                try:
-                    #WAIT FOR CONFIRMATION
-                    await ctx.send("Are you sure you want to create your account in this server? You can only have your account registered with ONE server at a time. Type `Y` or `y` if you want to proceed.")
-                    answer = await client.wait_for(
-                        "message",
-                        timeout=30,
-                        check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-                        )
-                    ans = answer.content
-                    #IF CONFIRMED
-                    if ans in ["Y", 'y']:
-                        now = datetime.now()
-                        doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
-                        #CREATE ACCOUNT
-                        sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, "2000-01-01 12:00:00"])
-                        await ctx.send("Your account was succesfully created.")
-                    else:
-                        await ctx.send("Your account was not created.")
-                #CHECK FOR TIMEOUT ERROR
-                except asyncio.TimeoutError:
-                    await ctx.send("You did not respond.")
+        elif not user_exists:
+            try:
+                #WAIT FOR CONFIRMATION
+                await ctx.send("Are you sure you want to create your account in this server? You can only have your account registered with ONE server at a time. Type `Y` or `y` if you want to proceed.")
+                answer = await client.wait_for(
+                    "message",
+                    timeout=30,
+                    check=lambda message: message.author == ctx.author and message.channel == ctx.channel
+                    )
+                ans = answer.content
+                #IF CONFIRMED
+                if ans in ["Y", 'y']:
+                    now = datetime.now()
+                    doc = now.strftime("%Y-%m-%d %H:%M:%S") #input
+                    #CREATE ACCOUNT
+                    sql_add("DUSERS", ctx.author.id, [ctx.guild.id, doc, 0, "2000-01-01 12:00:00"])
+                    await ctx.send("Your account was succesfully created.")
+                else:
+                    await ctx.send("Your account was not created.")
+            #CHECK FOR TIMEOUT ERROR
+            except asyncio.TimeoutError:
+                await ctx.send("You did not respond.")
 
                     
     elif attr == "bet":
@@ -172,15 +188,13 @@ async def addme(ctx, *, attr=None):
 @client.command(aliases=["d"])
 async def daily(ctx):
     #CHECK TIME
-    try:
-        fetchdata = sql_search("DUSERS", ctx.author.id)
-        duid, guid, doc, cbal, cdc = fetchdata
-        if ctx.guild.id == guid:
-            guilddata = sql_search("DGUILDS", guid)
-
-            
-            guid, cnam, csym = guilddata
-
+    user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
+    
+    if user_exists:
+        
+        if user_in_guild:
+            duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+            guid, cnam, csym = guilddata = sql_search("DGUILDS", guid)
             
             dt_storedtime = cdc
             nextdaily = dt_storedtime + timedelta(hours=24)
@@ -206,7 +220,7 @@ async def daily(ctx):
             
         else:
             await ctx.send("You do not have an account in this server.")
-    except:
+    else:
         await ctx.send("You don't have an account yet! Type `cc addme` to create one!")
     
     #IF TIME NOW GREATER THAN 24 + OL
@@ -219,10 +233,15 @@ async def daily(ctx):
 
 @client.command(aliases=["csi"])
 async def changeserverinfo(ctx):
+    
     if ctx.author.guild_permissions.manage_guild:
-        try:
-            duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
-            if guid == ctx.guild.id:
+        
+        user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
+        
+        if user_exists:
+
+            if user_in_guild:
+                duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
                 guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
                 await ctx.send("Current Coin-Name: {}\nCurrent Coin-Symbol: {}".format(cnam, csym))
                 await ctx.send("What do you want your Server's **new** Coin-Name to be?")
@@ -241,7 +260,7 @@ async def changeserverinfo(ctx):
                             check=lambda message: message.author == ctx.author and message.channel == ctx.channel
                             )
                         coinsym = sym_inp.content
-                        st_coinsym = emoji.emojize(coinsym)
+                        st_coinsym = emoji.demojize(coinsym)
                             
                         sql_guild_cngcoin(guid, coinname, st_coinsym)
 
@@ -249,7 +268,7 @@ async def changeserverinfo(ctx):
                         ecsym = emoji.emojize(csym)
                         servname = ctx.guild.name
                         icon_url = ctx.guild.icon_url
-                       
+                    
                         
                         embedVar = discord.Embed(
                         title="{}'s Coin System Changed!".format(servname), description="", color = colors.green
@@ -263,28 +282,25 @@ async def changeserverinfo(ctx):
                         await ctx.send("You did not respond with an emoji.")
                         
                 except asyncio.TimeoutError:
-                   await ctx.send("You did not respond.")                  
-
+                    await ctx.send("You did not respond.")                  
             else:
                 await ctx.send("You don't have an account in this server!")
-
-
-        except:
-            await ctx.send("You don't have an account in this server!")
+        else:
+            await ctx.send("You don't have an account! Create one using cc addme.")
     else:
         await ctx.send("Sorry! You don't have the permissions!")
 
     
 
-#@client.command()
-#async def tables(ctx, table):
-#    f_all = sql_show_table(table)
-#    for f_one in f_all:
-#        st_f_one = []
-#        for c in f_one:
-#            st_f_one.append(str(c))
-#        st_f = " | ".join(st_f_one)
-#        await ctx.send("`"+st_f+"`")
+@client.command()
+async def tables(ctx, table):
+    f_all = sql_show_table(table)
+    for f_one in f_all:
+        st_f_one = []
+        for c in f_one:
+            st_f_one.append(str(c))
+        st_f = " | ".join(st_f_one)
+        await ctx.send("`"+st_f+"`")
        
 
 
@@ -326,62 +342,71 @@ async def tip(ctx, user: discord.User = None, amount = None):
 @client.command(aliases=["pr"])
 async def profile(ctx, user: discord.User = None):
     if user == None:
-        user = ctx.author
+        user = ctx.author ; cond = 'me'
     else:
-        user = user
-    try:
-        user_data_all = sql_search("DUSERS", user.id)
-        duid, guid, doc, cbal, cdc = user_data_all
-        if guid == ctx.guild.id:
-            try:
-                guilddata = sql_search("DGUILDS", guid) 
-                guid, cnam, csym = guilddata
-                st_doc = doc.strftime("%d-%m-%Y")
-                
-                dt_storedtime = cdc
-                nextdaily = dt_storedtime + timedelta(hours=24)
-                nowtime = datetime.now()
-                
-                try:
-                    assert nextdaily > nowtime
-                    waittime = nextdaily - nowtime
-                    str_waittime_hour = str(waittime.seconds//3600)
-                    str_waittime_min = str((waittime.seconds//60)%60)
-                
-                except:
-                    str_waittime_hour = "**00**"
-                    str_waittime_min = "**00**"  
-                
-                name = user.name
-                avatar_url = user.avatar_url
-                
-                
-                embedVar = discord.Embed(
-                title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
-                )
-                embedVar.set_thumbnail(url=avatar_url)
-                embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
-                embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
-                
-                await ctx.send(embed=embedVar)
+        user = user; cond = 'they'
+    
+    user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx, user.id)
+
+    if user_exists:
         
+        if user_in_guild:
+            
+            user_data_all = sql_search("DUSERS", user.id)
+            duid, guid, doc, cbal, cdc = user_data_all
+
+            guilddata = sql_search("DGUILDS", guid) 
+            guid, cnam, csym = guilddata
+            
+            st_doc = doc.strftime("%d-%m-%Y")
+            
+            dt_storedtime = cdc
+            nextdaily = dt_storedtime + timedelta(hours=24)
+            nowtime = datetime.now()
+            
+            try:
+                assert nextdaily > nowtime
+                waittime = nextdaily - nowtime
+                str_waittime_hour = str(waittime.seconds//3600)
+                str_waittime_min = str((waittime.seconds//60)%60)
+            
             except:
-                await ctx.send("There is no account with this name in this server.")
+                str_waittime_hour = "**00**"
+                str_waittime_min = "**00**"  
+            
+            name = user.name
+            avatar_url = user.avatar_url
+            
+            
+            embedVar = discord.Embed(
+            title="{}'s profile".format(name), description="Created on {}".format(st_doc), color = colors.green
+            )
+            embedVar.set_thumbnail(url=avatar_url)
+            embedVar.add_field(name="Coin Balance {}: ".format(csym), value=str(cbal), inline=False)
+            embedVar.add_field(name="Next Daily in :calendar:: ", value="{}h {}m".format(str_waittime_hour, str_waittime_min), inline=False)
+            
+            await ctx.send(embed=embedVar)
+        
         else:
-            if user == ctx.author:
+            if cond == 'me':
                 await ctx.send("You don't have an account in this server!")
-            else:
+            elif cond == 'they':
                 await ctx.send("There is no account with this name in this server.")
 
-    except:
-        await ctx.send("There is no account with this name in this server.")
+    else:
+        if cond == 'me':
+            await ctx.send("You don't have an account yet.")
+        elif cond == 'they':
+            await ctx.send("There is no account with this name.")
 
 
 
 @client.command(aliases=["rm"])
 async def removeme(ctx):
-    if sql_check_exist("DUSERS", ctx.author.id):
-        duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
+
+    user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
+
+    if user_exists:
 
         # CHECK IF ANY PENDING LOANS
         
@@ -405,12 +430,16 @@ async def removeme(ctx):
 
 @client.command(aliases=["cs"])
 async def changeserver(ctx):
-    if sql_check_exist("DUSERS", ctx.author.id):
-        duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
-        if guid == ctx.guild.id:
+
+    user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
+
+    if user_exists:
+
+        if user_in_guild:
             await ctx.send("You have already registered your account here! You can only use this command in a different server.")
         else:
             await ctx.send("Are you sure you want to change your server?\n**YOU WILL LOSE ALL YOUR BALANCE!!**\nType `Y` or `y` to continue.")
+            
             try:
                 conf = await client.wait_for(
                     "message",
@@ -427,25 +456,6 @@ async def changeserver(ctx):
                 
     else:
         await ctx.send("You do not have an account in this server. Use `cc addme` to create one!")
-
-def check_user_guild_useringuild_exists(ctx, user: discord.User = None):
-    # returns bool values for existence of user, guild and user in guild
-    if user == None:
-        user = ctx.author
-    else:
-        user = user
-    guild = ctx.guild
-
-    user_exists = sql_check_exist("DUSERS", user.id)
-    guild_exists = sql_check_exist("DGUILDS", guild.id)
-    
-    [duid, guid] = sql_search("DUSERS", user.id)[0:2]
-    if guid == guild.id:
-        user_exists_in_guild = True
-    else:
-        user_exists_in_guild = False
-    
-    return user_exists, guild_exists, user_exists_in_guild
 
 
 # CHECK 
