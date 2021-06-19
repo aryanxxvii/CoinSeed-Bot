@@ -232,6 +232,12 @@ async def server(ctx):
     await ctx.send(embed=embedVar)
 
 
+@client.command(aliases=["il"])
+async def invite(ctx):
+    embed=discord.Embed(title="Invite Link!", url="https://discord.com/oauth2/authorize?client_id=853570284916572170&permissions=519248&scope=bot", description="Use this link to invite CoinSeed to your server!", color=color.blue)
+    await ctx.send(embed=embed)
+
+
 @client.event
 async def on_message(message):
     if message.author.id == 302050872383242240: #Disboard's ID
