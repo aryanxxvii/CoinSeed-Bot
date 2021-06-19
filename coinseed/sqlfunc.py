@@ -74,7 +74,7 @@ def sql_server_topusers(guid): #list the players in the server, csym
 def sql_user_cngserver(duid, newguid):
 
     global mycursor, mydb
-    mycursor.execute("UPDATE DUSERS SET GUID = {}, CBAL = 0, CDC = '2000-01-01 12:00:00' WHERE DUID = {}".format(newguid, duid))
+    mycursor.execute("UPDATE DUSERS SET GUID = {}, CBAL = 0 WHERE DUID = {}".format(newguid, duid))
     mydb.commit()
 
 def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):

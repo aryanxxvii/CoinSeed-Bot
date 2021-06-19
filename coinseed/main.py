@@ -62,8 +62,7 @@ async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
 
-coms = {"addme":"`Creates your CoinSeed Account`", "profile/pr":"`Displays your or tagged user's CoinSeed profile`", "daily/d":"`Collect daily coins!`", "balance/bal":"`Check your balance`", "server/s":"`Displays your server's CoinSeed profile`", "tip/give/t":"`Give your coins to someone!`\n`cc tip @EpicPerson 100`", "leaderboard/lb":"`View this server's leaderboard!`", "cngserverinfo/csi":"`Change your server's info (MOD ONLY)`", "changeserver/cs":"`Change the server linked to your account`", "removeme/rm":"`Permanently deletes your account :(`"}
-
+coms = {"addme":["`Creates your CoinSeed Account`"], "profile":[["pr"],"`Displays your or tagged user's CoinSeed profile`"], "daily":[["d"],"`Collect daily coins!`"], "balance":[["bal"],"`Check your balance`"], "server":[["s"],"`Displays your server's CoinSeed profile`"], "tip":[["t", "give"],"`Give your coins to someone!`\n`cc tip @EpicPerson 100`"], "leaderboard":[["lb"],"`View this server's leaderboard!`"], "cngserverinfo":[["csi"],"`Change your server's info (MOD ONLY)`"], "changeserver":[["cs"],"`Change the server linked to your account`"]}
 
 @client.command()
 async def help(ctx, comname = None):
@@ -77,15 +76,26 @@ async def help(ctx, comname = None):
             embedVar.add_field(name="{}".format(com), value="{}".format(comhelp), inline=True)
 
         await ctx.send(embed=embedVar)
-    elif comname in coms:
-        embedVar = discord.Embed(
-        title="{} Help".format(comname), description="{}".format(coms[comname]), color = colors.gold
-        )
-        embedVar.set_thumbnail(url=client.user.avatar_url)
-        await ctx.send(embed=embedVar)
     else:
-        await ctx.send("No such command exists! Use `cc help` to see all commands.")
-        
+        for com in coms:
+            if comname in coms or comname in com[0]:
+                if len(com) == 2:
+                    embedVar = discord.Embed(
+                    title="{} Help".format(com), description="Aliases: {}\n{}".format(", ".join(com[0]), com[1]), color = colors.gold
+                    )
+                    embedVar.set_thumbnail(url=client.user.avatar_url)
+                    await ctx.send(embed=embedVar)
+                else:
+                    embedVar = discord.Embed(
+                    title="{} Help".format(com), description="{}".format(com[0]), color = colors.gold
+                    )
+                    embedVar.set_thumbnail(url=client.user.avatar_url)
+                    await ctx.send(embed=embedVar)
+            
+    
+##    else:
+##        await ctx.send("No such command exists! Use `cc help` to see all commands.")
+##        
 
 #-------------------------------------------------------------------------------
 
@@ -104,6 +114,10 @@ async def help(ctx, comname = None):
 # [x]BUMP COINS
 # [x]LEADERBOARD
 # [ ]TOTAL COINS IN SERVER + %COINS IN USER PROFILE
+
+# Remove 'rm' = done
+# when changeserver, dont change daily = done
+# test if dict key can be list, if yes, {[command, alias]:help}
 
 #-------------------------------------------------------------------------------
 # FUNCTIONS TO REDUCE REPETITION OF CODE
@@ -482,33 +496,7 @@ async def leaderboard(ctx):
     embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
     await ctx.send(embed=embedVar)
 
-
-
-@client.command(aliases=["rm"])
-async def removeme(ctx):
-
-    user_exists, guild_exists, user_in_guild = check_user_guild_useringuild_exists(ctx)
-
-    if user_exists:
-
-        # CHECK IF ANY PENDING LOANS
-        
-        await ctx.send("Are you sure you want to delete your account? This action is permanent and you will **lose all your balance**. Type `confirm` if you want to proceed.")
-        try:
-            conf = await client.wait_for(
-                "message",
-                timeout=30,
-                check=lambda message: message.author == ctx.author and message.channel == ctx.channel
-                )
-            confcon = conf.content
-            if confcon.lower().strip() in ["confirm"]:
-                sql_delete("DUSERS", ctx.author.id)
-                await ctx.send("Your account has been deleted.")
-        except asyncio.TimeoutError:
-            await ctx.send("You did not respond.")
-    else:
-        await ctx.send("You don't have an account yet!")
-            
+           
 
 
 @client.command(aliases=["cs"])
