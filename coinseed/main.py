@@ -129,7 +129,7 @@ async def help(ctx, comname = None):
         embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
         await ctx.send(embed=embedVar)
     else:
-        await ctx.send("No such command exists")
+        await ctx.send("No such command exists!")
         
             
             
