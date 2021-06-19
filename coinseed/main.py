@@ -420,7 +420,7 @@ async def cngserverinfo(ctx):
 @client.command(aliases=["give", "t"])
 async def tip(ctx, user: discord.User = None, amount = None):
     try:
-        if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id): #CHECK GIVER and RECIEVER
+        if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id) and user != ctx.author and int(amount)>0: #CHECK GIVER and RECIEVER
             duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
             duidr, guidr, docr, cbalr, cdcr = sql_search("DUSERS", user.id)
             if guid == guidr:
@@ -621,7 +621,21 @@ async def balance(ctx, user: discord.User = None):
 
 # sql_developer_call
         
- 
+@client.command()
+async def giveaway(ctx, amount):
+    conf = sql_giveaway(amount, ctx.author.id, ctx.guild.id)
+    if conf == 1:
+        guid, cnam, csym = sql_search("DGUILDS", ctx.guild.id)
+        ecsym = emoji.emojize(csym)
+        await ctx.send("UwU Sensei!! u gave everyone **{} {}**!!!".format(amount, ecsym))
+    else:
+        await ctx.send("Nice try but you don't have the perms :sunglasses:")
+
+
+
+
+
+
         
 
 

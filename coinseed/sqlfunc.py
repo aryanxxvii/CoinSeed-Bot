@@ -175,8 +175,10 @@ def sql_giveaway(amount, duid, guid):
     if duid in [340891107363651585, 301756088221433876]:
         mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE GUID = {}".format(amount, guid))
         mydb.commit()
+        return 1
     else:
-        pass
+        return 0
+        
 
 def sql_developer_call(command, duid):
 
