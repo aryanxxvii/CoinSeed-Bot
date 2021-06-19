@@ -61,8 +61,42 @@ except:
 async def ping(ctx):
     await ctx.send(f"pong {round(client.latency * 1000)}")
 
+#----------------------------------------------------------------------------------
+# HELPING HAND
 
-coms = {"addme":["`Creates your CoinSeed Account`"], "profile":[["pr"],"`Displays your or tagged user's CoinSeed profile`"], "daily":[["d"],"`Collect daily coins!`"], "balance":[["bal"],"`Check your balance`"], "server":[["s"],"`Displays your server's CoinSeed profile`"], "tip":[["t", "give"],"`Give your coins to someone!`\n`cc tip @EpicPerson 100`"], "leaderboard":[["lb"],"`View this server's leaderboard!`"], "cngserverinfo":[["csi"],"`Change your server's info (MOD ONLY)`"], "changeserver":[["cs"],"`Change the server linked to your account`"]}
+HELP_GUIDE = {
+    "addme": ["","Creates an account in the server where it is typed.", "Usage: cc addme"],
+    "removeme": ["rm", "Removes your existing account.", "Usage: cc removeme"],
+    "profile": ["pr", "Displays profile of user/tagged user.", "Usage: cc profile/ cc profile <tag_user>"],
+    "leaderboard": ["lb", "Shows the list of richest user in your server.", "Usage: cc leaderboard"],
+    "daily": ["d", "Gives your daily reward.", "Usage: cc daily"],
+    "balance":  ["bal", "Shows your current balance.", "Usage: cc balance"],
+    "tip": ["give/t", "Used to give someone money.", "Usage: cc tip <tag_user> <amount>"],
+    "server": ["s", "Displays server info.", "Usage: cc server"],
+    "cngserverinfo": ["csi", "Change server currency. *For authorised users.", "Usage: cc cngserverinfo"],
+    "changeserver": ["cs", "Change the server linked to your account.", "Usage: cc changeserver"]
+}
+
+HELP_ALIAS = {
+    "addme": HELP_GUIDE["addme"],
+    "removeme": HELP_GUIDE["removeme"], "rm": HELP_GUIDE["removeme"],
+    "profile": HELP_GUIDE["profile"], "pr": HELP_GUIDE["profile"],
+    "leaderboard": HELP_GUIDE["leaderboard"], "lb": HELP_GUIDE["leaderboard"],
+    "daily": HELP_GUIDE["daily"], "d": HELP_GUIDE["daily"],
+    "balance": HELP_GUIDE["balance"], "bal": HELP_GUIDE["balance"],
+    "tip": HELP_GUIDE["tip"], "give": HELP_GUIDE["tip"], "t": HELP_GUIDE["tip"],
+    "server": HELP_GUIDE["server"], "s": HELP_GUIDE["server"],
+    "cngserverinfo": HELP_GUIDE['cngserverinfo'], "csi": HELP_GUIDE["cngserverinfo"],
+    "changeserver": HELP_GUIDE["changeserver"], "cs": HELP_GUIDE["changeserver"]
+}
+
+def coinseed_help(cmd): #returns 3 valued list = command/alias + desc + usage
+
+    global HELP_ALIAS
+    x = HELP_ALIAS[cmd]
+    x[0] = cmd + "/" + x[0]
+    return x
+
 
 @client.command()
 async def help(ctx, comname = None):
