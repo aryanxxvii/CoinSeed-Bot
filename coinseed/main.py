@@ -245,17 +245,22 @@ async def invite(ctx):
 async def on_message(message):
     if message.author.id == 302050872383242240: #Disboard's ID
         embeds = message.embeds
-        emdict = embed.to_dict()
+        for embed in embeds:
+            emdict = embed.to_dict()
         if "Bump done" in emdict["description"]:
             em_l = emdict["description"].split(" ")
+            
             tag = em_l[0][:-1]
+            
             if "!" in tag:
                 userid = int(tag[3:-1])
             else:
                 userid = int(tag[2:-1])
             try:
+                
                 duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
-                guid, cnam, csym = sql_search("DGUILDS", guid)
+                guid, cnam, ncsym = sql_search("DGUILDS", guid)
+                csym = emoji.emojize(ncsym)
                 if guid == message.guild.id:
                     amount = random.randrange(100, 201)
                     sql_addbal(userid, amount)
