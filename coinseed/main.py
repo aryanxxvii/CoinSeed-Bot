@@ -65,14 +65,14 @@ async def ping(ctx):
 # HELPING HAND
 
 HELP_GUIDE = {
-    "addme": ["","Creates an account in the server where it is typed.", "Usage: cc addme"],
-    "profile": ["pr", "Displays profile of user/tagged user.", "Usage: cc profile/ cc profile <tag_user>"],
-    "leaderboard": ["lb", "Shows the list of richest user in your server.", "Usage: cc leaderboard"],
-    "daily": ["d", "Gives your daily reward.", "Usage: cc daily"],
+    "addme": ["","Creates your account in the current server", "Usage: cc addme"],
+    "profile": ["pr", "Displays your/tagged-user's profile", "Usage: cc profile/ cc profile <tag_user>"],
+    "leaderboard": ["lb", "Shows list of 10 richest users in your server.", "Usage: cc leaderboard"],
+    "daily": ["d", "Gives your daily reward!", "Usage: cc daily"],
     "balance":  ["bal", "Shows your current balance.", "Usage: cc balance"],
-    "tip": ["give/t", "Used to give someone money.", "Usage: cc tip <tag_user> <amount>"],
-    "server": ["s", "Displays server info.", "Usage: cc server"],
-    "cngserverinfo": ["csi", "Change server currency. *For authorised users.", "Usage: cc cngserverinfo"],
+    "tip": ["give/t", "Give someone your coins!", "Usage: cc tip <tag_user> <amount>"],
+    "server": ["s", "Displays current server's info.", "Usage: cc server"],
+    "cngserverinfo": ["csi", "Change your server's coin-system (MOD ONLY!)", "Usage: cc cngserverinfo"],
     "changeserver": ["cs", "Change the server linked to your account.", "Usage: cc changeserver"]
 }
 
