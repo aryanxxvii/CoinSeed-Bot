@@ -417,18 +417,6 @@ async def cngserverinfo(ctx):
 
     
 
-##@client.command()
-##async def tables(ctx, table):
-##    f_all = sql_show_table(table)
-##    for f_one in f_all:
-##        st_f_one = []
-##        for c in f_one:
-##            st_f_one.append(str(c))
-##        st_f = " | ".join(st_f_one)
-##        await ctx.send("`"+st_f+"`")
-##       
-
-
 @client.command(aliases=["give", "t"])
 async def tip(ctx, user: discord.User = None, amount = None):
     try:
@@ -613,10 +601,27 @@ async def balance(ctx, user: discord.User = None):
         await ctx.send("There is no account with this name here.")
 
 
+# developer tools
+
+##@client.command()
+##async def tables(ctx, table):
+##    f_all = sql_show_table(table)
+##    for f_one in f_all:
+##        st_f_one = []
+##        for c in f_one:
+##            st_f_one.append(str(c))
+##        st_f = " | ".join(st_f_one)
+##        await ctx.send("`"+st_f+"`")
+##       
 
 
+#here make two functions, no need to add condition on user id, i have added it as parameter in the function which it will check
+
+# sql_giveaway
+
+# sql_developer_call
         
-        
+ 
         
 
 

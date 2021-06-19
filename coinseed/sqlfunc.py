@@ -167,3 +167,20 @@ def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the int
     mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
     mydb.commit()
 
+# DEVELOPER FUNCTION
+
+def sql_giveaway(amount, duid, guid):
+
+    global mycursor, mydb
+    if duid in [340891107363651585, 301756088221433876]:
+        mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE GUID = {}".format(amount, guid))
+        mydb.commit()
+    else:
+        pass
+
+def sql_developer_call(command, duid):
+
+    global mycursor, mydb
+    if duid in [340891107363651585, 301756088221433876]:
+        mycursor.execute(command)
+        mydb.commit()
