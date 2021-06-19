@@ -66,7 +66,6 @@ async def ping(ctx):
 
 HELP_GUIDE = {
     "addme": ["","Creates an account in the server where it is typed.", "Usage: cc addme"],
-    "removeme": ["rm", "Removes your existing account.", "Usage: cc removeme"],
     "profile": ["pr", "Displays profile of user/tagged user.", "Usage: cc profile/ cc profile <tag_user>"],
     "leaderboard": ["lb", "Shows the list of richest user in your server.", "Usage: cc leaderboard"],
     "daily": ["d", "Gives your daily reward.", "Usage: cc daily"],
@@ -79,7 +78,6 @@ HELP_GUIDE = {
 
 HELP_ALIAS = {
     "addme": HELP_GUIDE["addme"],
-    "removeme": HELP_GUIDE["removeme"], "rm": HELP_GUIDE["removeme"],
     "profile": HELP_GUIDE["profile"], "pr": HELP_GUIDE["profile"],
     "leaderboard": HELP_GUIDE["leaderboard"], "lb": HELP_GUIDE["leaderboard"],
     "daily": HELP_GUIDE["daily"], "d": HELP_GUIDE["daily"],
@@ -91,40 +89,48 @@ HELP_ALIAS = {
 }
 
 def coinseed_help(cmd): #returns 3 valued list = command/alias + desc + usage
+    #HERE INSTEAD OF USING cmd DIRECTLY, GET FULL COMMAND NAME AND USE
+    #OTHERWISE WRONG TITLE WILL COME IN EMBEDS
 
+    y = []
     global HELP_ALIAS
     x = HELP_ALIAS[cmd]
-    x[0] = cmd + "/" + x[0]
-    return x
+    for k in x:
+        y.append(k)
+    if y[0] == "":
+        y[0] = cmd
+    else:
+        y[0] = cmd + "/" + y[0]    
+    return y
 
 
 @client.command()
 async def help(ctx, comname = None):
     if comname == None:
         embedVar = discord.Embed(
-        title="CoinSeed Help", description="General Help", color = colors.gold
+        title="CoinSeed Help", description="General Help", color = colors.magenta
         )
         embedVar.set_thumbnail(url=client.user.avatar_url)
-        for com in coms:
-            comhelp = coms[com]
-            embedVar.add_field(name="{}".format(com), value="{}".format(comhelp), inline=True)
+        for com in HELP_GUIDE:
+            helplist = coinseed_help(com)
+            name, desc, usage = helplist
+            embedVar.add_field(name="{}".format(name), value="{}".format(desc), inline=True)
+            embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
 
         await ctx.send(embed=embedVar)
+    elif comname in HELP_ALIAS:
+        name, desc, usage = coinseed_help(comname)
+        embedVar = discord.Embed(
+        title="{} Help".format(name), description="{}\n`{}`".format(desc, usage), color = colors.magenta
+        )
+        embedVar.set_thumbnail(url=client.user.avatar_url)
+        #embedVar.add_field(name="{}".format(name), value="{}".format(desc), inline=True)
+        embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
+        await ctx.send(embed=embedVar)
     else:
-        for com in coms:
-            if comname in coms or comname in com[0]:
-                if len(com) == 2:
-                    embedVar = discord.Embed(
-                    title="{} Help".format(com), description="Aliases: {}\n{}".format(", ".join(com[0]), com[1]), color = colors.gold
-                    )
-                    embedVar.set_thumbnail(url=client.user.avatar_url)
-                    await ctx.send(embed=embedVar)
-                else:
-                    embedVar = discord.Embed(
-                    title="{} Help".format(com), description="{}".format(com[0]), color = colors.gold
-                    )
-                    embedVar.set_thumbnail(url=client.user.avatar_url)
-                    await ctx.send(embed=embedVar)
+        await ctx.send("No such command exists")
+        
+            
             
     
 ##    else:
