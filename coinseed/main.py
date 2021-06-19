@@ -245,32 +245,33 @@ async def invite(ctx):
 async def on_message(message):
     if message.author.id == 302050872383242240: #Disboard's ID
         embeds = message.embeds
+        print(embeds)
         for embed in embeds:
             emdict = embed.to_dict()
         if "Bump done" in emdict["description"]:
             em_l = emdict["description"].split(" ")
-            
+            print(em_l)
             tag = em_l[0][:-1]
-            
+            print(tag)
             if "!" in tag:
                 userid = int(tag[3:-1])
             else:
                 userid = int(tag[2:-1])
-            try:
+            #try:
+            print(userid)
+            duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
+            guid, cnam, ncsym = sql_search("DGUILDS", guid)
+            csym = emoji.emojize(ncsym)
+            if guid == message.guild.id:
+                amount = random.randrange(100, 201)
+                sql_addbal(userid, amount)
+                sql_search("DGUILDS", message.guild.id)
+                await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
                 
-                duid, guid, doc, cbal, cdc =  sql_search("DUSERS", userid)
-                guid, cnam, ncsym = sql_search("DGUILDS", guid)
-                csym = emoji.emojize(ncsym)
-                if guid == message.guild.id:
-                    amount = random.randrange(100, 201)
-                    sql_addbal(userid, amount)
-                    sql_search("DGUILDS", message.guild.id)
-                    await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
-                    
-                else:
-                    await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
-            except:
-                await ctx.send("You don't have an account yet! Create one with `cc addme`!")
+            else:
+                await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
+            #except:
+                #await ctx.send("You don't have an account yet! Create one with `cc addme`!")
     await client.process_commands(message)        
 
 # ACC CREATION
