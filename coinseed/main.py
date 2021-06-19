@@ -420,11 +420,11 @@ async def cngserverinfo(ctx):
 @client.command(aliases=["give", "t"])
 async def tip(ctx, user: discord.User = None, amount = None):
     try:
-        if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id) and user != ctx.author and int(amount)>0: #CHECK GIVER and RECIEVER
+        if sql_check_exist("DUSERS", ctx.author.id) and sql_check_exist("DUSERS", user.id) and user != ctx.author: #CHECK GIVER and RECIEVER
             duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
             duidr, guidr, docr, cbalr, cdcr = sql_search("DUSERS", user.id)
             if guid == guidr:
-                if cbal >= int(amount):
+                if cbal >= int(amount) > 0:
                     guid, cnam, csym = sql_search("DGUILDS", guid)
                     await ctx.send("Are you sure you want to give {} **{}** {}? Type `confirm`.".format(user.mention, amount, emoji.emojize(csym)))
                     try:
@@ -442,6 +442,8 @@ async def tip(ctx, user: discord.User = None, amount = None):
                             await ctx.send("Procedure cancelled.")
                     except asyncio.TimeoutError:
                         await ctx.send("You did not respond.")
+                elif int(amount) <= 0:
+                    await ctx.send("Are you an idiot?")
                 else:
                     await ctx.send("You don't have enough balance in your account!")
             else:
