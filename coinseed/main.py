@@ -73,7 +73,8 @@ HELP_GUIDE = {
     "tip": ["tip", "give/t", "Give someone your coins!", "Usage: cc tip <tag_user> <amount>"],
     "server": ["server", "s", "Displays current server's info.", "Usage: cc server"],
     "cngserverinfo": ["cngserverinfo", "csi", "Change your server's coin-system (MOD ONLY!)", "Usage: cc cngserverinfo"],
-    "changeserver": ["changeserver", "cs", "Change the server linked to your account.", "Usage: cc changeserver"]
+    "changeserver": ["changeserver", "cs", "Change the server linked to your account.", "Usage: cc changeserver"],
+    "invite":["invite", "il", "Gives you a link to invite CoinSeed to your server!", "Usage: cc invite"]
 }
 
 HELP_ALIAS = {
@@ -85,7 +86,8 @@ HELP_ALIAS = {
     "tip": HELP_GUIDE["tip"], "give": HELP_GUIDE["tip"], "t": HELP_GUIDE["tip"],
     "server": HELP_GUIDE["server"], "s": HELP_GUIDE["server"],
     "cngserverinfo": HELP_GUIDE['cngserverinfo'], "csi": HELP_GUIDE["cngserverinfo"],
-    "changeserver": HELP_GUIDE["changeserver"], "cs": HELP_GUIDE["changeserver"]
+    "changeserver": HELP_GUIDE["changeserver"], "cs": HELP_GUIDE["changeserver"],
+    "invite": HELP_GUIDE["invite"], "il": HELP_GUIDE["invite"]
 }
 
 def coinseed_help(cmd): #returns 3 valued list = command/alias + desc + usage
@@ -234,8 +236,9 @@ async def server(ctx):
 
 @client.command(aliases=["il"])
 async def invite(ctx):
-    embed=discord.Embed(title="Invite Link!", url="https://discord.com/oauth2/authorize?client_id=853570284916572170&permissions=519248&scope=bot", description="Use this link to invite CoinSeed to your server!", color=color.blue)
-    await ctx.send(embed=embed)
+    embedVar=discord.Embed(title="Invite Link!", url="https://discord.com/oauth2/authorize?client_id=853570284916572170&permissions=519248&scope=bot", description="Use this link to invite CoinSeed to your server!", color=colors.blue)
+    embedVar.set_thumbnail(url=client.user.avatar_url)
+    await ctx.send(embed=embedVar)
 
 
 @client.event
@@ -615,6 +618,7 @@ async def balance(ctx, user: discord.User = None):
         
         
         
+
 
 
 
