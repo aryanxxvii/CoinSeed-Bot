@@ -65,15 +65,15 @@ async def ping(ctx):
 # HELPING HAND
 
 HELP_GUIDE = {
-    "addme": ["","Creates your account in the current server", "Usage: cc addme"],
-    "profile": ["pr", "Displays your/tagged-user's profile", "Usage: cc profile/ cc profile <tag_user>"],
-    "leaderboard": ["lb", "Shows list of 10 richest users in your server.", "Usage: cc leaderboard"],
-    "daily": ["d", "Gives your daily reward!", "Usage: cc daily"],
-    "balance":  ["bal", "Shows your current balance.", "Usage: cc balance"],
-    "tip": ["give/t", "Give someone your coins!", "Usage: cc tip <tag_user> <amount>"],
-    "server": ["s", "Displays current server's info.", "Usage: cc server"],
-    "cngserverinfo": ["csi", "Change your server's coin-system (MOD ONLY!)", "Usage: cc cngserverinfo"],
-    "changeserver": ["cs", "Change the server linked to your account.", "Usage: cc changeserver"]
+    "addme": ["addme", "","Creates your account in the current server", "Usage: cc addme"],
+    "profile": ["profile", "pr", "Displays your/tagged-user's profile", "Usage: cc profile/ cc profile <tag_user>"],
+    "leaderboard": ["leaderboard", "lb", "Shows list of 10 richest users in your server.", "Usage: cc leaderboard"],
+    "daily": ["daily", "d", "Gives your daily reward!", "Usage: cc daily"],
+    "balance":  ["balance", "bal", "Shows your current balance.", "Usage: cc balance"],
+    "tip": ["tip", "give/t", "Give someone your coins!", "Usage: cc tip <tag_user> <amount>"],
+    "server": ["server", "s", "Displays current server's info.", "Usage: cc server"],
+    "cngserverinfo": ["cngserverinfo", "csi", "Change your server's coin-system (MOD ONLY!)", "Usage: cc cngserverinfo"],
+    "changeserver": ["changeserver", "cs", "Change the server linked to your account.", "Usage: cc changeserver"]
 }
 
 HELP_ALIAS = {
@@ -98,10 +98,10 @@ def coinseed_help(cmd): #returns 3 valued list = command/alias + desc + usage
     x = HELP_ALIAS[cmd]
     for k in x:
         y.append(k)
-    if y[0] == "":
-        y[0] = cmd
+    if y[1] == "":
+        y[1] = y[0]
     else:
-        y[0] = cmd + "/" + y[0]    
+        y[1] = y[0]+"/" + y[1]    
     return y
 
 
@@ -114,13 +114,13 @@ async def help(ctx, comname = None):
         embedVar.set_thumbnail(url=client.user.avatar_url)
         for com in HELP_GUIDE:
             helplist = coinseed_help(com)
-            name, desc, usage = helplist
+            mainname, name, desc, usage = helplist
             embedVar.add_field(name="{}".format(name), value="{}".format(desc), inline=True)
             embedVar.set_footer(icon_url = ctx.author.avatar_url, text = "Requested by {}".format(ctx.author.name))
 
         await ctx.send(embed=embedVar)
     elif comname in HELP_ALIAS:
-        name, desc, usage = coinseed_help(comname)
+        mainname, name, desc, usage = coinseed_help(comname)
         embedVar = discord.Embed(
         title="{} Help".format(name), description="{}\n`{}`".format(desc, usage), color = colors.magenta
         )
