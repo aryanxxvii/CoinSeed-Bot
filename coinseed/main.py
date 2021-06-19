@@ -91,6 +91,7 @@ HELP_ALIAS = {
 def coinseed_help(cmd): #returns 3 valued list = command/alias + desc + usage
     #HERE INSTEAD OF USING cmd DIRECTLY, GET FULL COMMAND NAME AND USE
     #OTHERWISE WRONG TITLE WILL COME IN EMBEDS
+    #PROBLEM COMES WHEN cmd IS ALIAS eg: cc help lb gives y[0] as "lb/lb"
 
     y = []
     global HELP_ALIAS
