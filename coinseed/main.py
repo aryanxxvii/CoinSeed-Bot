@@ -50,7 +50,9 @@ async def on_ready():
 try:
     from sqlfunc import *
 except:
-    print("Server Error or Error in MySQL Code")
+    time.sleep(30)
+    from sqlfunc import *
+    
     
 
 
