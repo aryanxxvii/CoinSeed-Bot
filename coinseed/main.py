@@ -6,6 +6,8 @@ import time
 from datetime import datetime, timedelta
 import emoji
 
+from sqlfunc import *
+
 
 bot_prefix = "cc ", "<@853570284916572170> ", "<@!853570284916572170> "
 intents = discord.Intents.all()
@@ -42,20 +44,10 @@ class colors:
 @client.event
 async def on_ready():
     print("Bot is ready")
-    
-    game = discord.Game("cc help")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="cc help"))
 
-result = None
-while result is None:
-    try:
-        from sqlfunc import *
-        result = True
-    except:
-        time.sleep(5)
 
-    
-    
+
 
 
 
@@ -273,9 +265,8 @@ async def on_message(message):
                 await message.channel.send("<@{}>, **+{}** {} {} have been added to your balance!\n*Thanks for bumping this server!*".format(str(userid), str(amount), csym, cnam))
                 
             else:
-                await ctx.send("You have an account in a different server. You can only link one server at a time.\n Use `cc changeserver` or `cc cs` to change your account-server.")
-            #except:
-                #await ctx.send("You don't have an account yet! Create one with `cc addme`!")
+                pass
+           
     await client.process_commands(message)        
 
 # ACC CREATION

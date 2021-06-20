@@ -1,16 +1,28 @@
 from re import X
 import mysql.connector
+import time
+
+
+
+        
 
 def sql_connection_call():
-        mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
-        mycursor = mydb.cursor()
-        return mydb, mycursor
+    connected = False
+    while connected == False:
+        try:
+            mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
+            mycursor = mydb.cursor()
+            connected = True
+            return mydb, mycursor
+        except:
+            time.sleep(5)
+    
 
-mydb, mycursor = sql_connection_call()
+
 
 def sql_add(tablename, key=None, rec = list()):
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     T = tablename.upper()
     
     if T == "DGUILDS":
@@ -24,7 +36,7 @@ def sql_add(tablename, key=None, rec = list()):
 
 def sql_delete(tablename, key):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
     mycursor.execute("DELETE FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
@@ -32,7 +44,7 @@ def sql_delete(tablename, key):
 
 def sql_search(tablename, key):
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
     mycursor.execute("SELECT * FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
@@ -45,7 +57,8 @@ def sql_search(tablename, key):
 
 
 def sql_check_exist(tablename, key):
-    global mycursor, mydb
+
+    mydb, mycursor = sql_connection_call()
     T = tablename.upper()
     table_keys = {'DGUILDS': 'GUID', 'DUSERS': 'DUID', 'DTRANSACTIONS': 'TID'}
     mycursor.execute("SELECT COUNT(*) FROM " + T + " WHERE " + table_keys[T] + " = {}".format(key))
@@ -58,7 +71,7 @@ def sql_check_exist(tablename, key):
 
 def sql_show_table(tablename): #returns a list of tuples
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("SELECT * FROM " + tablename.upper() + ";")
     x = mycursor.fetchall()
     return x
@@ -69,7 +82,7 @@ def sql_show_table(tablename): #returns a list of tuples
 
 def sql_server_topusers(guid): #list the players in the server, csym
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("SELECT CSYM, CNAM FROM DGUILDS WHERE GUID = {}".format(int(guid)))
     csym, cnam = mycursor.fetchone()
     mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL".format(int(guid)))
@@ -78,13 +91,13 @@ def sql_server_topusers(guid): #list the players in the server, csym
 
 def sql_user_cngserver(duid, newguid):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DUSERS SET GUID = {}, CBAL = 0 WHERE DUID = {}".format(newguid, duid))
     mydb.commit()
 
 def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DGUILDS SET CNAM = %s , CSYM = %s WHERE GUID = %s;", (newcoinname, newcoinsymbol, key))
     mydb.commit()
 
@@ -92,25 +105,25 @@ def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 
 def sql_update_date(duid, today):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DUSERS SET CDC = '{}' WHERE DUID = '{}'".format(today, duid))
     mydb.commit()
 
 def sql_addbal(duid, amount): #adds specified amount to balance
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE DUID = {}".format(amount, duid))
     mydb.commit()
 
 def sql_subbal(duid, amount): #subtracts specifies amount from balance
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DUSERS SET CBAL = CBAL - {} WHERE DUID = {}".format(amount, duid))
     mydb.commit()
 
 def sql_loan_transaction(tid, donor, receiver, amount): #return 1 if success else return -1 : updates the coinbalance when receiver compensates loan
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
 
     mycursor.execute("SELECT CBAL FROM DUSERS WHERE DUID = {}".format(receiver))
     x = mycursor.fetchone()
@@ -129,7 +142,7 @@ def sql_loan_transaction(tid, donor, receiver, amount): #return 1 if success els
 
 def sql_loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if success else return -1: creates a new loan record
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
 
     mycursor.execute("SELECT CBAL FROM DUSERS WHERE DUID = {}".format(donor))
     x = mycursor.fetchone()
@@ -147,7 +160,7 @@ def sql_loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 
 
 def sql_loan_check(tid): # return 1 if success else return -1 : Deletes the record if loan completed
      
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
      
     mycursor.execute("SELECT AMOUNT FROM DTRANSACTIONS WHERE TID = {}".format(tid))
     x = mycursor.fetchone()
@@ -157,7 +170,7 @@ def sql_loan_check(tid): # return 1 if success else return -1 : Deletes the reco
 
 def sql_loan_punish(today): #returns the list of users who failed to complete loan before due date
     
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("SELECT RECEIVER FROM DTRANSACTIONS WHERE DUEDATE < '{}'".format(today))
     x = mycursor.fetchall()
 
@@ -168,7 +181,7 @@ def sql_loan_punish(today): #returns the list of users who failed to complete lo
 
 def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the interest
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     mycursor.execute("UPDATE DTRANSACTIONS SET AMOUNT = AMOUNT + PRINCIPLE*{}".format(rate))
     mydb.commit()
 
@@ -176,7 +189,7 @@ def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the int
 
 def sql_giveaway(amount, duid, guid):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     if duid in [340891107363651585, 301756088221433876]:
         mycursor.execute("UPDATE DUSERS SET CBAL = CBAL + {} WHERE GUID = {}".format(amount, guid))
         mydb.commit()
@@ -187,7 +200,7 @@ def sql_giveaway(amount, duid, guid):
 
 def sql_developer_call(command, duid):
 
-    global mycursor, mydb
+    mydb, mycursor = sql_connection_call()
     if duid in [340891107363651585, 301756088221433876]:
         mycursor.execute(command)
         mydb.commit()
