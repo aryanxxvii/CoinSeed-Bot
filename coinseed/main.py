@@ -44,8 +44,7 @@ async def on_ready():
     print("Bot is ready")
     
     game = discord.Game("cc help")
-    await client.change_presence(status=discord.Status.idle, activity=game)
-
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="cc help"))
 
 result = None
 while result is None:
