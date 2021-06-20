@@ -21,21 +21,26 @@ def sql_connection_call():
             time.sleep(5)
     
 
-def check_last(now):
-    now = datetime.now()
-    global s_last, mydb, mycursor
+def check_last():
+    bnow = datetime.now()
+    snow = bnow.strftime("%H:%M:%S")
+    now = datetime.strptime(snow, "%H:%M:%S")
+    global s_last
     last = datetime.strptime(s_last, "%H:%M:%S")
     if last + timedelta(minutes = 10) < now:
+        
         s_last = datetime.now().strftime("%H:%M:%S")
+        
         return True
     else:
+        
         return False
 
 
 
 def sql_add(tablename, key=None, rec = list()):
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -52,7 +57,7 @@ def sql_add(tablename, key=None, rec = list()):
 
 def sql_delete(tablename, key):
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -64,7 +69,7 @@ def sql_delete(tablename, key):
 def sql_search(tablename, key):
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -82,7 +87,7 @@ def sql_search(tablename, key):
 def sql_check_exist(tablename, key):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -99,7 +104,7 @@ def sql_check_exist(tablename, key):
 def sql_show_table(tablename): #returns a list of tuples
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -114,7 +119,7 @@ def sql_show_table(tablename): #returns a list of tuples
 def sql_server_topusers(guid): #list the players in the server, csym
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -127,7 +132,7 @@ def sql_server_topusers(guid): #list the players in the server, csym
 def sql_user_cngserver(duid, newguid):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -137,7 +142,7 @@ def sql_user_cngserver(duid, newguid):
 def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -149,7 +154,7 @@ def sql_guild_cngcoin(key, newcoinname, newcoinsymbol):
 def sql_update_date(duid, today):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -159,7 +164,7 @@ def sql_update_date(duid, today):
 def sql_addbal(duid, amount): #adds specified amount to balance
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -169,7 +174,7 @@ def sql_addbal(duid, amount): #adds specified amount to balance
 def sql_subbal(duid, amount): #subtracts specifies amount from balance
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -179,7 +184,7 @@ def sql_subbal(duid, amount): #subtracts specifies amount from balance
 def sql_loan_transaction(tid, donor, receiver, amount): #return 1 if success else return -1 : updates the coinbalance when receiver compensates loan
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -202,7 +207,7 @@ def sql_loan_transaction(tid, donor, receiver, amount): #return 1 if success els
 def sql_loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 if success else return -1: creates a new loan record
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -224,7 +229,7 @@ def sql_loan_initiate(donor, receiver, principle, loandate, duedate): #return 1 
 def sql_loan_check(tid): # return 1 if success else return -1 : Deletes the record if loan completed
      
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -238,7 +243,7 @@ def sql_loan_check(tid): # return 1 if success else return -1 : Deletes the reco
 def sql_loan_punish(today): #returns the list of users who failed to complete loan before due date
     
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -253,7 +258,7 @@ def sql_loan_punish(today): #returns the list of users who failed to complete lo
 def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the interest
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -265,7 +270,7 @@ def sql_interest_add(rate): #returns 1 if success else returns -1 : adds the int
 def sql_giveaway(amount, duid, guid):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
@@ -280,7 +285,7 @@ def sql_giveaway(amount, duid, guid):
 def sql_developer_call(command, duid):
 
     global mydb, mycursor
-    if check_last:
+    if check_last():
         mydb, mycursor = sql_connection_call()
     else:
         pass
