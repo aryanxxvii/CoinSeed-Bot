@@ -54,7 +54,6 @@ while result is None:
         result = True
     except:
         time.sleep(5)
-         pass
 
     
     
