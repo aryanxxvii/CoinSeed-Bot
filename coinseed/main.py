@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import random
+import time
 from datetime import datetime, timedelta
 import emoji
 
@@ -41,17 +42,20 @@ class colors:
 @client.event
 async def on_ready():
     print("Bot is ready")
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="cc help"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='cc help'))
 
 
 
 
+result = None
+while result is None:
+    try:
+        from sqlfunc import *
+        result = True
+    except:
+        time.sleep(5)
+         pass
 
-try:
-    from sqlfunc import *
-except:
-    time.sleep(30)
-    from sqlfunc import *
     
     
 
