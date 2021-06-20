@@ -1,7 +1,12 @@
 from re import X
 import mysql.connector
-mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
-mycursor = mydb.cursor()
+
+def sql_connection_call():
+        mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
+        mycursor = mydb.cursor()
+        return mydb, mycursor
+
+mydb, mycursor = sql_connection_call()
 
 def sql_add(tablename, key=None, rec = list()):
     
