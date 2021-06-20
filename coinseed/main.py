@@ -42,9 +42,9 @@ class colors:
 @client.event
 async def on_ready():
     print("Bot is ready")
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='cc help'))
-
-
+    
+    game = discord.Game("cc help")
+    await client.change_presence(status=discord.Status.idle, activity=game)
 
 
 result = None
@@ -595,7 +595,8 @@ async def balance(ctx, user: discord.User = None):
             user = user
         try:
             duid, guid, doc, cbal, cdc = sql_search("DUSERS", user.id)
-            guid, cnam, csym = sql_search("DGUILDS", guid)
+            guid, cnam, ncsym = sql_search("DGUILDS", guid)
+            csym = emoji.emojize(ncsym)
             if guid == ctx.guild.id:
                 embedVar = discord.Embed(
                     title="{}'s balance".format(user.name), description=str("Use `cc daily` to get coins!"), color = colors.gold
