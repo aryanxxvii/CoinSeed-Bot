@@ -526,7 +526,7 @@ async def leaderboard(ctx):
     desc = ""
     for r in range(len(ulist)):
         duid, cbal = ulist[r]
-        desc = desc + "**{}. {}:**\t{} {}\n".format(r+1, client.get_user(duid).name, cbal, emoji.emojize(csym))
+        desc = desc + "**{}. {}: *{}* {}**\n".format(r+1, client.get_user(duid).name, cbal, emoji.emojize(csym))
     embedVar = discord.Embed(
     title="{}'s Leaderboard".format(ctx.guild.name), description=desc, color = colors.red
     )
