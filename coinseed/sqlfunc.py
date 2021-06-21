@@ -7,7 +7,7 @@ mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinse
 mycursor = mydb.cursor()
 
 
-s_last = "12:00:00"
+s_last = "00:00:00"
 
 def sql_connection_call():
     connected = False
