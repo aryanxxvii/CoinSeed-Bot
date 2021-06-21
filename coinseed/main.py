@@ -477,7 +477,7 @@ async def profile(ctx, user: discord.User = None):
             st_doc = doc.strftime("%d-%m-%Y")
             
             dt_storedtime = cdc
-            nextdaily = dt_storedtime + timedelta(hours=24)
+            nextdaily = dt_storedtime + timedelta(hours=20)
             nowtime = datetime.now()
             
             try:
