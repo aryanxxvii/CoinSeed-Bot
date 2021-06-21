@@ -323,7 +323,7 @@ async def daily(ctx):
             guid, cnam, csym = guilddata = sql_search("DGUILDS", guid)
             
             dt_storedtime = cdc
-            nextdaily = dt_storedtime + timedelta(hours=24)
+            nextdaily = dt_storedtime + timedelta(hours=20)
             nowtime = datetime.now()
             if nowtime > nextdaily:
                 amount = random.randrange(100, 600) 
