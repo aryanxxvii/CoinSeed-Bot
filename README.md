@@ -11,5 +11,7 @@ A simple discord bot written completely in Python for creating and managing any 
 ---
 - Especially useful for servers with a shop/cafe/restaurant theme to engage members.
 
+PS: If you want the Giveaway feature... just DM me at cherrychika#2727 on Discord and I will add your server's ID. 
+
 
 
