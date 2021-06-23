@@ -1,17 +1,13 @@
 # COINSEED
+A simple discord bot written completely in Python for creating and managing any server's currency!
 
-## TODO
-- [x] PERSONAL ACC CREATION
-- [x] GUILD ACC CREATION
-- [x] BAL CHECK
-- [x] PROFILE
-- [x] DAILY
-- [ ] LOANS
-- [x] CHANGE SERVER
-- [x] TIPS
-- [x] CHANGE SYMBOL/NAME
-- [x] Remove Symbols + names hardcoding in cc profile
-- [x] SERVER PROFILE
-- [x] MAKE HELP
-- [x] BUMP COINS
+## Some features:
+- Creates a server's currency when it joins.
+- Allows moderators to customize their server's account and currency name+symbol.
+- Cool features like Daily Coins, Tipping and Leaderboards.
+- User and server profiles.
+
+- Especially useful for servers with a shop/cafe/restaurant theme to engage members.
+
+
 
