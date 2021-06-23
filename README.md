@@ -1,4 +1,4 @@
-# COINSEED
+# CoinSeed
 A simple discord bot written completely in Python for creating and managing any server's currency!
 
 ## Some features:
