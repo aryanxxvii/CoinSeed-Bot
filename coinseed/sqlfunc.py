@@ -2,25 +2,27 @@ from re import X
 import mysql.connector
 import time
 from datetime import datetime, timedelta
+passwd = os.environ['DB_PASSWD']
 
-mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
+mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
 mycursor = mydb.cursor()
 
 
 s_last = "00:00:00"
 
+#Keep trying to connect to server if it goes down
 def sql_connection_call():
     connected = False
     while connected == False:
         try:
-            mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd="Aryanxxvii27!", database="aryan27_coinseed")
+            mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
             mycursor = mydb.cursor()
             connected = True
             return mydb, mycursor
         except:
             time.sleep(5)
     
-
+#Automatically reconnect to server if the last command was made 10 or more minutes ago to ensure server is up.
 def check_last():
     bnow = datetime.now()
     snow = bnow.strftime("%H:%M:%S")

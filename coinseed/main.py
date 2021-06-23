@@ -640,12 +640,8 @@ async def giveaway(ctx, amount):
 
 
 
-        
+client.run(os.environ['BOT_TOKEN'])
 
-
-
-
-client.run("ODUzNTcwMjg0OTE2NTcyMTcw.YMXTRg.zqtJBlIi-oo3wqUOVYUozYho3Lk")
 
 
 
