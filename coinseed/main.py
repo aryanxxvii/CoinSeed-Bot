@@ -607,16 +607,20 @@ async def balance(ctx, user: discord.User = None):
 
 # developer tools
 
-##@client.command()
-##async def tables(ctx, table):
-##    f_all = sql_show_table(table)
-##    for f_one in f_all:
-##        st_f_one = []
-##        for c in f_one:
-##            st_f_one.append(str(c))
-##        st_f = " | ".join(st_f_one)
-##        await ctx.send("`"+st_f+"`")
-##       
+@client.command()
+async def tables(ctx, table):
+    if ctx.author.id in [340891107363651585, 301756088221433876]:
+        f_all = sql_show_table(table)
+        for f_one in f_all:
+            st_f_one = []
+            for c in f_one:
+                st_f_one.append(str(c))
+            st_f = " | ".join(st_f_one)
+            await ctx.send("`"+st_f+"`")
+    else:
+        await ctx.send("Nice try but you don't have the perms :sunglasses:")
+
+       
 
 
 #here make two functions, no need to add condition on user id, i have added it as parameter in the function which it will check
