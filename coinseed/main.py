@@ -615,7 +615,7 @@ async def tables(ctx, table):
         f_all = sql_show_table(table)
         for f_one in f_all:
             st_f_one = []
-           for c in f_one:
+            for c in f_one:
                 st_f_one.append(str(c))
             st_f = " | ".join(st_f_one)
             await ctx.send("`"+st_f+"`")
