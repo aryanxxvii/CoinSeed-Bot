@@ -521,7 +521,9 @@ async def profile(ctx, user: discord.User = None):
 @client.command(aliases=["lb"])
 async def leaderboard(ctx):
     ulist, csym, cnam = sql_server_topusers(ctx.guild.id)
-    ulist = ulist[::-1]
+    #11, 10, 9 .... , 1 = ulist
+    #ulist = ulist[::-1]
+    
     ecsym = emoji.emojize(csym)
     desc = ""
     for r in range(len(ulist)):
@@ -613,7 +615,7 @@ async def tables(ctx, table):
         f_all = sql_show_table(table)
         for f_one in f_all:
             st_f_one = []
-            for c in f_one:
+           for c in f_one:
                 st_f_one.append(str(c))
             st_f = " | ".join(st_f_one)
             await ctx.send("`"+st_f+"`")
