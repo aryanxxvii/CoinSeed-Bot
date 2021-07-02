@@ -128,9 +128,8 @@ def sql_server_topusers(guid): #list the players in the server, csym
         pass
     mycursor.execute("SELECT CSYM, CNAM FROM DGUILDS WHERE GUID = {}".format(int(guid)))
     csym, cnam = mycursor.fetchone()
-    mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL".format(int(guid)))
+    mycursor.execute("SELECT DUID, CBAL FROM DUSERS WHERE GUID = {} ORDER BY CBAL DESC".format(int(guid)))
     user_list = mycursor.fetchall()[:10]
-    user_list = user_list[::-1]
     return user_list, csym, cnam
 
 def sql_user_cngserver(duid, newguid):
