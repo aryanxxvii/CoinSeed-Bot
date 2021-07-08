@@ -326,6 +326,10 @@ async def daily(ctx):
             nextdaily = dt_storedtime + timedelta(hours=20)
             nowtime = datetime.now()
             if nowtime > nextdaily:
+                
+                st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
+                sql_update_date(ctx.author.id, st_now)
+                
                 amount = random.randrange(100, 600) 
                 sql_addbal(ctx.author.id, amount)
                 if amount in range(100, 250):
@@ -334,9 +338,7 @@ async def daily(ctx):
                     await ctx.send("Nice! **+{}** {} {} have been added to your account!".format(amount, emoji.emojize(csym), cnam))
                 elif amount in range(450, 600):
                     await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym), cnam))
-                
-                st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
-                sql_update_date(ctx.author.id, st_now)
+            
                 
             else:
                 waittime = nextdaily - nowtime
