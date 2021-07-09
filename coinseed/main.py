@@ -319,6 +319,9 @@ async def daily(ctx):
     if user_exists:
         
         if user_in_guild:
+            
+            await ctx.send("Processing your request... ")
+            time.sleep(5)
             duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
             guid, cnam, csym = guilddata = sql_search("DGUILDS", guid)
             
