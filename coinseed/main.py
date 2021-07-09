@@ -309,7 +309,7 @@ async def addme(ctx, *, attr=None):
         await ctx.send("This will create your betting account")
 
 
-
+cooldown = []
 
 @client.command(aliases=["d"])
 async def daily(ctx):
@@ -320,27 +320,37 @@ async def daily(ctx):
         
         if user_in_guild:
             
-            await ctx.send("Processing your request... ")
-            time.sleep(5)
             duid, guid, doc, cbal, cdc = sql_search("DUSERS", ctx.author.id)
             guid, cnam, csym = guilddata = sql_search("DGUILDS", guid)
             
             dt_storedtime = cdc
             nextdaily = dt_storedtime + timedelta(hours=20)
             nowtime = datetime.now()
+            
             if nowtime > nextdaily:
+
+                #cooldown check in
+                global cooldown
+                if duid not in cooldown:
+                    cooldown.append(duid)
+                    st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
+                    sql_update_date(ctx.author.id, st_now)
+                    
+                    amount = random.randrange(100, 600) 
+                    sql_addbal(ctx.author.id, amount)
+                    if amount in range(100, 250):
+                        await ctx.send("**+{}** {} {} have been added to your account.".format(amount, emoji.emojize(csym), cnam))
+                    elif amount in range(250, 450):
+                        await ctx.send("Nice! **+{}** {} {} have been added to your account!".format(amount, emoji.emojize(csym), cnam))
+                    elif amount in range(450, 600):
+                        await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym), cnam))
+                    
+                    time.sleep(2)
+                    cooldown.remove(duid)
                 
-                st_now = nowtime.strftime("%Y-%m-%d %H:%M:%S")
-                sql_update_date(ctx.author.id, st_now)
-                
-                amount = random.randrange(100, 600) 
-                sql_addbal(ctx.author.id, amount)
-                if amount in range(100, 250):
-                    await ctx.send("**+{}** {} {} have been added to your account.".format(amount, emoji.emojize(csym), cnam))
-                elif amount in range(250, 450):
-                    await ctx.send("Nice! **+{}** {} {} have been added to your account!".format(amount, emoji.emojize(csym), cnam))
-                elif amount in range(450, 600):
-                    await ctx.send("AWESOME! **+{}** {} have been added to your account!!".format(amount, emoji.emojize(csym), cnam))
+                elif duid in cooldown:
+                    sql_subbal(ctx.author.id, 700)
+                    await ctx.send("AWESOME! **-{}** {} {} have been added to your account. This is a very rare occurence.".format(700, emoji.emojize(csym), cnam))
             
                 
             else:
