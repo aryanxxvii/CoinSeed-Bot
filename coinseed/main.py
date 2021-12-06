@@ -236,16 +236,13 @@ async def invite(ctx):
     embedVar.set_thumbnail(url=client.user.avatar_url)
     await ctx.send(embed=embedVar)
 
+
 @client.event
 async def on_message(message):
     msg = message.content
     userid = message.author.id
     if len(msg) > 2 and sql_check_exist("DUSERS", userid):
         sql_addbal(userid, 2)
-
-
-@client.event
-async def on_message(message):
     if message.author.id == 302050872383242240: #Disboard's ID
         embeds = message.embeds
         print(embeds)
