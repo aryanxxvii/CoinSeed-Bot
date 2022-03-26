@@ -1,11 +1,10 @@
-from re import X
 import os
 import mysql.connector
 import time
 from datetime import datetime, timedelta
 passwd = os.environ['DB_PASSWD']
 
-mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
+mydb = mysql.connector.connect(host="sql6.freesqldatabase.com", user="sql6481573", passwd=passwd, port=3306, database="sql6481573")
 mycursor = mydb.cursor()
 
 
