@@ -1,4 +1,6 @@
+import os
 import discord
+
 from discord.ext import commands
 import asyncio
 import random
@@ -659,7 +661,6 @@ async def giveaway(ctx, amount):
         await ctx.send("UwU Sensei!! u gave everyone **{} {}**!!!".format(amount, ecsym))
     else:
         await ctx.send("Nice try but you don't have the perms :sunglasses:")
-
 
 
 
