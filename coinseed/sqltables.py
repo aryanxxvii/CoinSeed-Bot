@@ -1,6 +1,7 @@
+import os
 import mysql.connector
 passwd = os.environ['DB_PASSWD']
-mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=DB_PASSWD, database="aryan27_coinseed")
+mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
 mycursor = mydb.cursor()
 
 #mycursor.execute("DROP TABLE DGUILDS")
