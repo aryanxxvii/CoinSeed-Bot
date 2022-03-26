@@ -15,7 +15,7 @@ def sql_connection_call():
     connected = False
     while connected == False:
         try:
-            mydb = mysql.connector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
+            mydb = mysql.connector.connect(host="sql6.freesqldatabase.com", user="sql6481573", passwd=passwd, port=3306, database="sql6481573")
             mycursor = mydb.cursor()
             connected = True
             return mydb, mycursor
