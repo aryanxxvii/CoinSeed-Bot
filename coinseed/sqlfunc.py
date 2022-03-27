@@ -3,7 +3,7 @@ import mysql.connector
 import time
 from datetime import datetime, timedelta
 passwd = os.environ['DB_PASSWD']
-mydb = mysql.conector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
+mydb = mysql.conector.connect(host="johnny.heliohost.org", user="aarav_root", passwd=passwd, database="aarav_db")
 #mydb = mysql.connector.connect(host="sql6.freesqldatabase.com", user="sql6481573", passwd=passwd, port=3306, database="sql6481573")
 mycursor = mydb.cursor()
 
@@ -15,7 +15,7 @@ def sql_connection_call():
     connected = False
     while connected == False:
         try:
-            mydb = mysql.conector.connect(host="johnny.heliohost.org", user="aryan27_coinseedbot", passwd=passwd, database="aryan27_coinseed")
+            mydb = mysql.conector.connect(host="johnny.heliohost.org", user="aarav_root", passwd=passwd, database="aarav_db")
             #mydb = mysql.connector.connect(host="sql6.freesqldatabase.com", user="sql6481573", passwd=passwd, port=3306, database="sql6481573")
             mycursor = mydb.cursor()
             connected = True
